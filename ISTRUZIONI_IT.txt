@@ -1,0 +1,113 @@
+3D PRINT COST v1.0
+===================
+
+DESCRIZIONE
+-----------
+3D Print Cost è un'applicazione desktop per stimare il costo di una stampa 3D
+considerando filamento ed energia elettrica.
+
+La versione 1.0 include:
+- interfaccia moderna dark;
+- apertura massimizzata dopo la scelta della lingua;
+- Italiano e English selezionabili a ogni avvio;
+- database locale dei filamenti;
+- prezzo filamento in €/kg;
+- costo energia configurabile in €/kWh;
+- consumo medio stampante configurabile in Watt;
+- esportazione Excel;
+- gestione di progetti composti da più piatti;
+- totale automatico dell'intero oggetto.
+
+UTILIZZO
+--------
+1. Avvia 3D_Print_Cost.exe oppure, con Python installato:
+       py 3D_Print_Cost.py
+
+2. All'avvio scegli Italiano o English.
+
+3. In "Gestisci filamenti" aggiungi i filamenti e il relativo prezzo €/kg.
+
+4. In "Impostazioni corrente" configura:
+   - costo dell'energia in €/kWh;
+   - consumo medio della stampante in Watt.
+
+5. Inserisci:
+   - filamento;
+   - filamento totale in grammi;
+   - ore;
+   - minuti.
+
+6. Premi "CALCOLA COSTO".
+
+FILAMENTO TOTALE
+----------------
+È consigliato usare il valore di filamento totale indicato dallo slicer,
+così da considerare il materiale conteggiato dallo slicer oltre al solo peso
+del modello.
+
+FORMULE
+-------
+Costo filamento =
+    (grammi / 1000) × prezzo €/kg
+
+Energia stimata =
+    (Watt / 1000) × ore totali
+
+Costo corrente =
+    kWh × prezzo €/kWh
+
+Costo totale =
+    costo filamento + costo corrente
+
+EXCEL E PROGETTI MULTI-PIATTO
+-----------------------------
+Dopo il calcolo premi "SALVA RISULTATO IN EXCEL".
+
+Per il primo piatto di un nuovo progetto crea un nuovo file .xlsx.
+Per i piatti successivi seleziona lo stesso file Excel esistente.
+
+L'app aggiunge automaticamente ogni piatto e aggiorna il TOTALE OGGETTO.
+
+DATABASE
+--------
+Su Windows i dati sono salvati in:
+
+    %LOCALAPPDATA%\3D Print Cost\costi_stampa_3d.db
+
+Il database contiene filamenti, prezzi e impostazioni. Per un backup è
+sufficiente copiarlo mentre l'applicazione è chiusa.
+
+VERSIONE PYTHON
+---------------
+Richiede Python 3 e openpyxl:
+
+    pip install openpyxl
+    py 3D_Print_Cost.py
+
+CREAZIONE DELL'EXE
+------------------
+È incluso BUILD_EXE_WINDOWS.bat.
+
+Su Windows, con Python installato, eseguilo per installare/aggiornare
+PyInstaller e openpyxl e generare:
+
+    dist\3D_Print_Cost.exe
+
+L'icona viene incorporata anche nelle risorse dell'eseguibile.
+
+SMARTSCREEN
+-----------
+L'eseguibile generato autonomamente non è firmato digitalmente. Microsoft
+Defender SmartScreen può quindi mostrare un avviso.
+
+PRECISIONE
+----------
+Il consumo elettrico è una stima basata sul consumo medio impostato.
+Per maggiore precisione utilizza un misuratore di energia.
+
+Non sono inclusi automaticamente ammortamento, manutenzione, usura, lavoro,
+stampe fallite, tasse o margine commerciale.
+
+LICENZA
+-------
+MIT License. Consulta il file LICENSE.

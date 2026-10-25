@@ -1,0 +1,113 @@
+3D PRINT COST v1.0
+===================
+
+DESCRIPTION
+-----------
+3D Print Cost is a desktop application for estimating 3D printing costs using
+filament consumption and electricity.
+
+Version 1.0 includes:
+- modern dark interface;
+- maximized main window after language selection;
+- Italian and English selectable at every launch;
+- local filament database;
+- filament price per kg;
+- configurable electricity price per kWh;
+- configurable average printer power in Watts;
+- Excel export;
+- multi-plate project management;
+- automatic combined object total.
+
+HOW TO USE
+----------
+1. Run 3D_Print_Cost.exe or, with Python installed:
+       py 3D_Print_Cost.py
+
+2. Choose Italiano or English at startup.
+
+3. Open "Manage filaments" and add your filaments and price per kg.
+
+4. Open "Electricity settings" and configure:
+   - electricity price per kWh;
+   - average printer consumption in Watts.
+
+5. Enter:
+   - filament;
+   - total filament in grams;
+   - hours;
+   - minutes.
+
+6. Click "CALCULATE COST".
+
+TOTAL FILAMENT
+--------------
+Use the total filament value reported by your slicer when possible, so the
+calculation includes material already counted by the slicer in addition to
+the model itself.
+
+FORMULAS
+--------
+Filament cost =
+    (grams / 1000) × price per kg
+
+Estimated energy =
+    (Watts / 1000) × total hours
+
+Electricity cost =
+    kWh × electricity price per kWh
+
+Total cost =
+    filament cost + electricity cost
+
+EXCEL AND MULTI-PLATE PROJECTS
+------------------------------
+After calculating a plate, click "SAVE RESULT TO EXCEL".
+
+For the first plate of a new project, create a new .xlsx file.
+For later plates, select the same existing Excel workbook.
+
+The application appends each plate and updates OBJECT TOTAL automatically.
+
+DATABASE
+--------
+On Windows, application data is stored in:
+
+    %LOCALAPPDATA%\3D Print Cost\costi_stampa_3d.db
+
+The database contains filaments, prices and settings. To back it up, copy the
+file while the application is closed.
+
+PYTHON VERSION
+--------------
+Requires Python 3 and openpyxl:
+
+    pip install openpyxl
+    py 3D_Print_Cost.py
+
+BUILDING THE EXE
+----------------
+BUILD_EXE_WINDOWS.bat is included.
+
+On Windows, with Python installed, run it to install/update PyInstaller and
+openpyxl and generate:
+
+    dist\3D_Print_Cost.exe
+
+The application icon is also bundled into the executable resources.
+
+SMARTSCREEN
+-----------
+A self-built executable is not digitally signed, so Microsoft Defender
+SmartScreen may display a warning.
+
+ACCURACY
+--------
+Electricity consumption is an estimate based on the configured average power.
+For better accuracy, use an energy meter.
+
+Printer depreciation, maintenance, component wear, labor, failed prints,
+taxes and profit margin are not automatically included.
+
+LICENSE
+-------
+MIT License. See LICENSE.
