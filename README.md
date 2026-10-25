@@ -1,5 +1,10 @@
 # 3D Print Cost — v1.0
 
+[![Latest Release](https://img.shields.io/github/v/release/Mirozzo/3D-Print-Cost?label=version)](https://github.com/Mirozzo/3D-Print-Cost/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/Mirozzo/3D-Print-Cost/total?label=downloads)](https://github.com/Mirozzo/3D-Print-Cost/releases)
+[![Platform](https://img.shields.io/badge/platform-Windows-blue)](https://github.com/Mirozzo/3D-Print-Cost/releases/latest)
+[![License](https://img.shields.io/github/license/Mirozzo/3D-Print-Cost)](LICENSE)
+
 A modern desktop utility for estimating the running cost of 3D prints.
 
 3D Print Cost calculates **filament + electricity** cost and can save multiple build plates into the same Excel workbook to obtain the total cost of a complete 3D-printing project.
