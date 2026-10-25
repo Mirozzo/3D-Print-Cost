@@ -19,6 +19,24 @@ A modern desktop utility for estimating the running cost of 3D prints.
 - Standalone Windows build supported
 - Python source included
 
+## Interface preview
+
+### Main dashboard
+
+![3D Print Cost main dashboard](Home.png)
+
+### Language selection
+
+![3D Print Cost language selection](Choose%20language.png)
+
+### Filament manager
+
+![3D Print Cost filament manager](Manage%20filament.png)
+
+### Electricity settings
+
+![3D Print Cost electricity settings](Manage%20current.png)
+
 ## Quick start
 
 ### Windows executable
