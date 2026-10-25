@@ -16,34 +16,32 @@ A modern desktop utility for estimating the running cost of 3D prints.
 - Excel export
 - Multi-plate project support with automatic object total
 - Persistent local settings
-- Standalone Windows build supported
+- Standalone Windows executable available through Releases
 - Python source included
 
 ## Interface preview
 
 ### Main dashboard
 
-![3D Print Cost main dashboard](Home.png)
+![3D Print Cost main dashboard](Screenshot/Home.png)
 
 ### Language selection
 
-![3D Print Cost language selection](Choose%20language.png)
+![3D Print Cost language selection](Screenshot/Choose%20language.png)
 
 ### Filament manager
 
-![3D Print Cost filament manager](Manage%20filament.png)
+![3D Print Cost filament manager](Screenshot/Manage%20filament.png)
 
 ### Electricity settings
 
-![3D Print Cost electricity settings](Manage%20current.png)
+![3D Print Cost electricity settings](Screenshot/Manage%20current.png)
 
 ## Quick start
 
 ### Windows executable
 
-Download the latest Release, extract it and run:
-
-`3D_Print_Cost.exe`
+Download `3D_Print_Cost.exe` from the latest GitHub Release and run it.
 
 The standalone executable does not require Python.
 
@@ -81,21 +79,17 @@ On Windows:
 %LOCALAPPDATA%\3D Print Cost\costi_stampa_3d.db
 ```
 
-## Build the Windows executable
-
-Run `BUILD_EXE_WINDOWS.bat` on Windows with Python installed. It uses PyInstaller and produces `dist\3D_Print_Cost.exe`.
-
 ## Repository files
 
 - `3D_Print_Cost.py` — application source
 - `3D_Print_Cost.ico` — application icon
-- `BUILD_EXE_WINDOWS.bat` — Windows/PyInstaller build helper
+- `Screenshot/` — application interface screenshots
 - `ISTRUZIONI_IT.txt` — detailed Italian guide
 - `INSTRUCTIONS_EN.txt` — detailed English guide
 - `LICENSE` — MIT License
 - `.gitignore` — Git ignore rules
 
-The compiled `.exe` is best distributed through the GitHub **Releases** section rather than treated as source code.
+The compiled `.exe` is distributed through the GitHub **Releases** section rather than stored in the source repository.
 
 ## Accuracy
 
