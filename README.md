@@ -2,17 +2,26 @@
 
 [![Latest Release](https://img.shields.io/github/v/release/Mirozzo/3D-Print-Cost?label=version)](https://github.com/Mirozzo/3D-Print-Cost/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/Mirozzo/3D-Print-Cost/total?label=downloads)](https://github.com/Mirozzo/3D-Print-Cost/releases)
-[![Platform](https://img.shields.io/badge/platform-Windows-blue)](https://github.com/Mirozzo/3D-Print-Cost/releases/latest)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Android-blue)](https://github.com/Mirozzo/3D-Print-Cost/releases/latest)
 [![License](https://img.shields.io/github/license/Mirozzo/3D-Print-Cost)](LICENSE)
 
-A modern desktop utility for estimating the running cost of 3D prints.
+A free 3D printing cost calculator for **Windows and Android**, with dedicated desktop and mobile interfaces.
 
 3D Print Cost calculates **filament + electricity** cost and can save multiple build plates into the same Excel workbook to obtain the total cost of a complete 3D-printing project.
 
+## Download — Version 1.0
+
+| Platform | Download | Installation |
+| --- | --- | --- |
+| **Windows** | [3D_Print_Cost.exe](https://github.com/Mirozzo/3D-Print-Cost/releases/download/v1.0/3D_Print_Cost.exe) | Download and run the executable; Python is not required. |
+| **Android** | [3D-Print-Cost-v1.0-Android.apk](https://github.com/Mirozzo/3D-Print-Cost/releases/download/v1.0/3D-Print-Cost-v1.0-Android.apk) | Download and open the APK on your Android device. Allow installation from this source if Android requests it. |
+
+Both downloads are available in the [official v1.0 Release](https://github.com/Mirozzo/3D-Print-Cost/releases/tag/v1.0). The Android APK is distributed outside Google Play.
+
 ## Highlights
 
-- 🇮🇹 Italian and 🇬🇧 English interface — selectable at every launch
-- Modern dark desktop UI
+- 🇮🇹 Italian and 🇬🇧 English interfaces
+- Modern dark desktop interface and redesigned touchscreen-friendly Android interface
 - Main application opens maximized
 - Local filament and price database
 - Configurable electricity price (€/kWh)
@@ -21,10 +30,10 @@ A modern desktop utility for estimating the running cost of 3D prints.
 - Excel export
 - Multi-plate project support with automatic object total
 - Persistent local settings
-- Standalone Windows executable available through Releases
+- Standalone Windows executable and Android APK available through Releases
 - Python source included
 
-## Interface preview
+## Interface preview (Windows)
 
 ### Main dashboard
 
@@ -52,7 +61,13 @@ The standalone executable does not require Python.
 
 > The executable is not digitally signed. Microsoft Defender SmartScreen may display a warning for independently distributed applications.
 
-### Python
+### Android APK
+
+Download `3D-Print-Cost-v1.0-Android.apk` from the Release and install it on an Android phone. No Python or Flutter installation is required. The Android version features a mobile-optimized dark interface, local filament management, adjustable electricity settings and Excel export with a location picker.
+
+The APK is not distributed through Google Play. Install only from the official GitHub Release above.
+
+### Python (Windows source)
 
 Requirements: Python 3 and `openpyxl`.
 
@@ -74,7 +89,7 @@ The initial defaults are **€0.15/kWh** and **200 W**, and both can be changed.
 
 ## Multi-plate projects
 
-Create a new Excel workbook for the first plate. For every later plate belonging to the same object, select that existing workbook. The application appends each plate and updates the combined **Object Total** automatically.
+Create an Excel workbook for the first plate. For subsequent plates, select the existing workbook to append additional rows. The Windows version includes a combined **Object Total**; the Android version lets you choose the destination for the updated Excel file.
 
 ## Local database
 
@@ -86,7 +101,9 @@ On Windows:
 
 ## Repository files
 
-- `3D_Print_Cost.py` — application source
+- `3D_Print_Cost.py` — original Windows application source
+- `Windows/3D_Print_Cost.py` — Windows source copy on the Android development branch
+- `Android/` — Flutter source on the `android-flutter-setup` development branch (not yet merged into `main`)
 - `3D_Print_Cost.ico` — application icon
 - `Screenshot/` — application interface screenshots
 - `ISTRUZIONI_IT.txt` — detailed Italian guide
@@ -94,7 +111,7 @@ On Windows:
 - `LICENSE` — MIT License
 - `.gitignore` — Git ignore rules
 
-The compiled `.exe` is distributed through the GitHub **Releases** section rather than stored in the source repository.
+The compiled Windows `.exe` and Android `.apk` are distributed through **Releases**, not stored in the source repository. Android development currently lives in the [`android-flutter-setup` branch](https://github.com/Mirozzo/3D-Print-Cost/tree/android-flutter-setup).
 
 ## Accuracy
 
