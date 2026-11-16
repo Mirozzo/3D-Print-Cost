@@ -43,8 +43,11 @@ jobs:
       - name: Build APK
         working-directory: Android
         run: flutter build apk --release
+      - name: Rename APK for distribution
+        run: mv Android/build/app/outputs/flutter-apk/app-release.apk Android/build/app/outputs/flutter-apk/3D-Print-Cost-v1.0-Android.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: 3D-Print-Cost-Android-APK
-          path: Android/build/app/outputs/flutter-apk/app-release.apk
+          name: 3D-Print-Cost-v1.0-Android
+          path: Android/build/app/outputs/flutter-apk/3D-Print-Cost-v1.0-Android.apk
+          if-no-files-found: error
