@@ -15,6 +15,28 @@ jobs:
       - name: Generate Android platform
         working-directory: Android
         run: flutter create --platforms=android --org com.mirozzo --project-name three_d_print_cost .
+      - name: Set app name and original Windows icon
+        working-directory: Android
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/src/main/AndroidManifest.xml')
+          content=p.read_text()
+          content=content.replace('android:label="three_d_print_cost"', 'android:label="3D Print Cost"')
+          p.write_text(content)
+          PY
+          python3 -m pip install --user Pillow
+          python3 - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          icon=Image.open('../3D_Print_Cost.ico')
+          icon.seek(0)
+          sizes={'mipmap-mdpi':48,'mipmap-hdpi':72,'mipmap-xhdpi':96,'mipmap-xxhdpi':144,'mipmap-xxxhdpi':192}
+          for folder,size in sizes.items():
+              dst=Path('android/app/src/main/res')/folder
+              dst.mkdir(parents=True,exist_ok=True)
+              icon.convert('RGBA').resize((size,size),Image.Resampling.LANCZOS).save(dst/'ic_launcher.png')
+          PY
       - name: Install dependencies
         working-directory: Android
         run: flutter pub get
