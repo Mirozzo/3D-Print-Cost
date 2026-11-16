@@ -1,0 +1,28 @@
+name: Build Android APK
+on:
+  workflow_dispatch:
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Generate Android platform
+        working-directory: Android
+        run: flutter create --platforms=android --org com.mirozzo --project-name three_d_print_cost .
+      - name: Install dependencies
+        working-directory: Android
+        run: flutter pub get
+      - name: Build APK
+        working-directory: Android
+        run: flutter build apk --release
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3D-Print-Cost-Android-APK
+          path: Android/build/app/outputs/flutter-apk/app-release.apk
