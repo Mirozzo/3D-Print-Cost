@@ -10,6 +10,54 @@ const bg=Color(0xff0B1120),panel=Color(0xff151E2E),teal=Color(0xff2DD4BF),blue=C
 void main()=>runApp(const MaterialApp(debugShowCheckedModeBanner:false,home:CostApp()));
 double? parse(String v)=>double.tryParse(v.trim().replaceAll(',','.'));
 String euro(double n)=>'€ ${n.toStringAsFixed(2).replaceAll('.',',')}';
+// Decorative artwork drawn natively: no network images or external assets.
+class SpoolArt extends StatelessWidget {
+ const SpoolArt({super.key,this.size=100}); final double size;
+ @override Widget build(BuildContext context)=>SizedBox(width:size,height:size,child:CustomPaint(painter:_SpoolPainter()));
+}
+class _SpoolPainter extends CustomPainter {
+ @override void paint(Canvas c,Size s){
+  c.save();c.scale(s.width/100,s.height/100);
+  final glow=Paint()..color=const Color(0x442DD4BF)..maskFilter=const MaskFilter.blur(BlurStyle.normal,13);
+  c.drawOval(const Rect.fromLTWH(16,9,70,86),glow);
+  c.drawOval(const Rect.fromLTWH(8,12,72,78),Paint()..color=const Color(0xff102B3C));
+  final filament=Paint()..color=const Color(0xff04D8C5)..style=PaintingStyle.stroke..strokeWidth=2.3;
+  for(var x=19.0;x<55;x+=3.5){c.drawArc(Rect.fromLTWH(x,16,34,68),-1.7,3.45,false,filament);}
+  c.drawOval(const Rect.fromLTWH(43,8,47,84),Paint()..color=const Color(0xff243D4B));
+  c.drawOval(const Rect.fromLTWH(43,8,47,84),Paint()..color=const Color(0xff4E6A78)..style=PaintingStyle.stroke..strokeWidth=3);
+  for(var i=0;i<6;i++){final a=i*1.0472;c.save();c.translate(66.5,50);c.rotate(a);c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(-4,-34,8,26),const Radius.circular(3)),Paint()..color=const Color(0xff0A1B2B));c.restore();}
+  c.drawOval(const Rect.fromLTWH(55,36,23,28),Paint()..color=const Color(0xff0A1B2B));
+  c.drawOval(const Rect.fromLTWH(61,42,11,16),Paint()..color=const Color(0xff506A7A));
+  c.restore();
+ }
+ @override bool shouldRepaint(covariant CustomPainter oldDelegate)=>false;
+}
+class PrinterArt extends StatelessWidget{
+ const PrinterArt({super.key});
+ @override Widget build(BuildContext context)=>CustomPaint(size:const Size(145,130),painter:_PrinterPainter());
+}
+class _PrinterPainter extends CustomPainter{
+ @override void paint(Canvas c,Size s){
+  c.save();c.scale(s.width/145,s.height/130);
+  final line=Paint()..color=const Color(0xff17D9CF)..style=PaintingStyle.stroke..strokeWidth=4..strokeCap=StrokeCap.round;
+  final dark=Paint()..color=const Color(0xff125A70);
+  c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(15,9,115,8),const Radius.circular(3)),dark);
+  c.drawLine(const Offset(24,15),const Offset(24,108),line);
+  c.drawLine(const Offset(119,15),const Offset(119,108),line);
+  c.drawLine(const Offset(17,107),const Offset(129,107),line);
+  c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(50,26,60,17),const Radius.circular(4)),Paint()..color=const Color(0xff128E9E));
+  c.drawLine(const Offset(79,43),const Offset(79,54),line);
+  c.drawPath(Path()..moveTo(71,54)..lineTo(87,54)..lineTo(80,63)..close(),Paint()..color=const Color(0xff2DD4BF));
+  c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(30,92,84,9),const Radius.circular(4)),Paint()..color=const Color(0xff14949C));
+  final boat=Path()..moveTo(43,78)..lineTo(102,78)..lineTo(92,90)..lineTo(56,90)..close();
+  c.drawPath(boat,Paint()..color=const Color(0xff20D5C6));
+  c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(65,61,27,18),const Radius.circular(4)),Paint()..color=const Color(0xff1C9DAB));
+  c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(73,50,12,15),const Radius.circular(3)),Paint()..color=const Color(0xff1DE1D0));
+  c.drawCircle(const Offset(80,70),3,Paint()..color=const Color(0xff0B3947));
+  c.restore();
+ }
+ @override bool shouldRepaint(covariant CustomPainter oldDelegate)=>false;
+}
 class Filament {Filament(this.name,this.price); String name; double price;}
 class CostApp extends StatefulWidget {const CostApp({super.key}); @override State<CostApp> createState()=>_CostState();}
 class _CostState extends State<CostApp>{
@@ -21,7 +69,7 @@ class _CostState extends State<CostApp>{
  Future<void> save()async{final p=await SharedPreferences.getInstance();await p.setString('filaments',jsonEncode(filaments.map((f)=>{'name':f.name,'price':f.price}).toList()));await p.setString('energy',energy.text);await p.setString('power',power.text);await p.setBool('english',english);}
  void msg(String s)=>ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(s)));
  Widget field(String title,TextEditingController c)=>TextField(controller:c,keyboardType:const TextInputType.numberWithOptions(decimal:true),decoration:InputDecoration(labelText:title,filled:true,fillColor:const Color(0xff202F46),border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:const BorderSide(color:Color(0xff54708A))),enabledBorder:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:const BorderSide(color:Color(0xff53677F)))));
- Widget card(String title,Widget child,{IconData icon=Icons.layers_outlined})=>Container(margin:const EdgeInsets.only(bottom:16),padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(begin:Alignment.topLeft,end:Alignment.bottomRight,colors:[Color(0xff172E45),Color(0xff151C36)]),borderRadius:BorderRadius.circular(24),border:Border.all(color:const Color(0xff29576B),width:1.2),boxShadow:const [BoxShadow(color:Color(0x44000000),blurRadius:16,offset:Offset(0,8))]),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(children:[Icon(icon,color:teal,size:25),const SizedBox(width:10),Expanded(child:Text(title,style:const TextStyle(fontSize:19,fontWeight:FontWeight.w800)))]),const SizedBox(height:18),child]));
+ Widget card(String title,Widget child,{IconData icon=Icons.layers_outlined})=>Container(margin:const EdgeInsets.only(bottom:16),padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(begin:Alignment.topLeft,end:Alignment.bottomRight,colors:[Color(0xff172E45),Color(0xff151C36)]),borderRadius:BorderRadius.circular(24),border:Border.all(color:const Color(0xff29576B),width:1.2),boxShadow:const [BoxShadow(color:Color(0x44000000),blurRadius:16,offset:Offset(0,8))]),child:Stack(children:[if(icon==Icons.print_outlined)Positioned(right:-14,top:-20,child:Opacity(opacity:0.24,child:const PrinterArt())),Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(children:[Icon(icon,color:teal,size:25),const SizedBox(width:10),Expanded(child:Text(title,style:const TextStyle(fontSize:19,fontWeight:FontWeight.w800)))]),const SizedBox(height:18),child])]));
  Widget btn(String title,VoidCallback fn,{IconData icon=Icons.calculate_outlined})=>SizedBox(width:double.infinity,child:Container(decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xff16D6BD),Color(0xff3187D4),Color(0xff9645E8)]),borderRadius:BorderRadius.circular(28)),child:FilledButton.icon(style:FilledButton.styleFrom(backgroundColor:Colors.transparent,shadowColor:Colors.transparent,foregroundColor:Colors.white,padding:const EdgeInsets.symmetric(vertical:16)),onPressed:fn,icon:Icon(icon),label:Text(title,style:const TextStyle(fontWeight:FontWeight.bold)))));
  Widget metric(String label,String value,IconData icon)=>Expanded(child:Column(children:[Icon(icon,color:teal,size:23),const SizedBox(height:7),Text(label,textAlign:TextAlign.center,style:const TextStyle(fontSize:11,color:Color(0xffC5D3E4))),const SizedBox(height:5),FittedBox(fit:BoxFit.scaleDown,child:Text(value,style:const TextStyle(fontWeight:FontWeight.bold,fontSize:16)))]));
  void calculate(){final g=parse(grams.text),h=parse(hours.text),m=parse(minutes.text),e=parse(energy.text),w=parse(power.text);if(selected==null||[g,h,m,e,w].any((x)=>x==null||!x!.isFinite||x<0)||m!>=60){msg(tr('Controlla i dati e seleziona un filamento.','Check inputs and select a filament.'));return;}final f=filaments.firstWhere((x)=>x.name==selected);setState((){material=g!/1000*f.price;kwh=w!/1000*(h!+m!/60);electric=kwh!*e!;total=material!+electric!;});}
@@ -66,7 +114,7 @@ class _CostState extends State<CostApp>{
  Widget filamentPage()=>ListView(padding:const EdgeInsets.all(16),children:[btn(tr('AGGIUNGI FILAMENTO','ADD FILAMENT'),()=>editFilament()),...filaments.map((f)=>Card(color:panel,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(18)),child:ListTile(leading:const Icon(Icons.view_in_ar,color:teal),title:Text(f.name),subtitle:Text('${euro(f.price)}/kg'),onTap:()=>editFilament(f),trailing:IconButton(icon:const Icon(Icons.delete_outline),onPressed:()async{final yes=await showDialog<bool>(context:context,builder:(c)=>AlertDialog(title:Text(tr('Eliminare filamento?','Delete filament?')),content:Text(f.name),actions:[TextButton(onPressed:()=>Navigator.pop(c,false),child:const Text('No')),TextButton(onPressed:()=>Navigator.pop(c,true),child:const Text('Yes'))]));if(yes==true){setState((){filaments.remove(f);if(selected==f.name)selected=filaments.isEmpty?null:filaments.first.name;total=null;});save();}}))))]); 
  Widget settings()=>ListView(padding:const EdgeInsets.all(16),children:[card(tr('IMPOSTAZIONI','SETTINGS'),Column(children:[field(tr('Costo corrente (€/kWh)','Electricity price (€/kWh)'),energy),const SizedBox(height:14),field(tr('Consumo medio stampante (W)','Average printer power (W)'),power),const SizedBox(height:14),SwitchListTile(title:const Text('English'),value:english,onChanged:(v){setState(()=>english=v);save();}),btn(tr('SALVA IMPOSTAZIONI','SAVE SETTINGS'),(){final e=parse(energy.text),w=parse(power.text);if(e==null||w==null||!e.isFinite||!w.isFinite||e<0||w<0){msg(tr('Valori non validi','Invalid values'));return;}save();setState(()=>total=null);msg(tr('Impostazioni salvate','Settings saved'));})]))]);
  @override Widget build(BuildContext context)=>Theme(data:ThemeData(useMaterial3:true,brightness:Brightness.dark,scaffoldBackgroundColor:bg,colorScheme:ColorScheme.fromSeed(seedColor:teal,brightness:Brightness.dark)),child:Scaffold(
- appBar:AppBar(toolbarHeight:105,backgroundColor:bg,title:Row(children:[const Icon(Icons.precision_manufacturing_outlined,color:teal,size:37),const SizedBox(width:12),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('3D Print Cost',style:TextStyle(fontWeight:FontWeight.w900,fontSize:27)),Text(tr('Calcola il costo delle tue stampe 3D','Calculate your 3D printing costs'),style:const TextStyle(fontSize:12,color:Color(0xffA8BDCD)))])),const Icon(Icons.info_outline,color:Color(0xffA8BDCD))]),bottom:PreferredSize(preferredSize:const Size.fromHeight(3),child:Container(height:3,decoration:const BoxDecoration(gradient:LinearGradient(colors:[teal,blue,Color(0xff9A48EB)]))))),
+ appBar:AppBar(toolbarHeight:105,backgroundColor:bg,title:Row(children:[const Icon(Icons.print_outlined,color:teal,size:37),const SizedBox(width:12),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('3D Print Cost',style:TextStyle(fontWeight:FontWeight.w900,fontSize:27)),Text(tr('Calcola il costo delle tue stampe 3D','Calculate your 3D printing costs'),style:const TextStyle(fontSize:12,color:Color(0xffA8BDCD)))])),const SpoolArt(size:66),const SizedBox(width:2),const Icon(Icons.info_outline,color:Color(0xffA8BDCD),size:19)]),bottom:PreferredSize(preferredSize:const Size.fromHeight(3),child:Container(height:3,decoration:const BoxDecoration(gradient:LinearGradient(colors:[teal,blue,Color(0xff9A48EB)]))))),
  body:Column(children:[
  Container(height:79,padding:const EdgeInsets.symmetric(horizontal:12,vertical:8),child:Row(children:[
  for(final (i,icon,label) in [(0,Icons.calculate_outlined,tr('Calcolo','Calculator')),(1,Icons.layers_outlined,tr('Filamenti','Filaments')),(2,Icons.settings_outlined,tr('Impostazioni','Settings'))])
