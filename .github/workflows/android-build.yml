@@ -1,11 +1,6 @@
 name: Build Android APK
 on:
   workflow_dispatch:
-  push:
-    branches: [main, android-flutter-setup]
-    paths:
-      - 'Android/**'
-      - '.github/workflows/android-build.yml'
 jobs:
   apk:
     runs-on: ubuntu-latest
