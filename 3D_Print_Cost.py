@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import sqlite3
+from windows_v11 import install_schema, CostsWindow, add_excel_details
 from pathlib import Path
 from datetime import datetime
 
@@ -299,12 +300,14 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.db = Database(DB_PATH)
+        install_schema(self.db)
+        self.costs_window = None
         self.withdraw()
         self.lang = self.choose_language()
         self.db.set_setting("language", self.lang)
         self.T = TRANSLATIONS[self.lang]
 
-        self.title(APP_NAME)
+        self.title(APP_NAME + " v1.1")
         self.geometry("1120x820")
         self.minsize(980, 740)
         self.configure(bg="#0B1120")
@@ -415,7 +418,7 @@ class App(tk.Tk):
         T = self.T
         outer = ttk.Frame(self, padding=(54, 38), style="App.TFrame"); outer.pack(fill="both", expand=True)
         header = ttk.Frame(outer, style="App.TFrame"); header.pack(fill="x", pady=(0, 30))
-        ttk.Label(header, text="3D PRINT COST", style="Title.TLabel").pack(anchor="w")
+        ttk.Label(header, text="3D PRINT COST  v1.1", style="Title.TLabel").pack(anchor="w")
         ttk.Label(header, text=T["subtitle"], style="Subtitle.TLabel").pack(anchor="w", pady=(4, 0))
         accent_bar = tk.Frame(header, bg="#2DD4BF", height=3, bd=0, highlightthickness=0)
         accent_bar.pack(fill="x", pady=(18, 0))
@@ -457,8 +460,16 @@ class App(tk.Tk):
         actions = ttk.Frame(outer, padding=(0,22,0,0), style="App.TFrame"); actions.pack(fill="x")
         ttk.Button(actions, text="◉  " + T["manage_filaments"], command=lambda: FilamentManager(self, self.db, self.refresh, self.lang), style="Secondary.TButton").pack(side="left")
         ttk.Button(actions, text="⚙  " + T["current_settings"], command=lambda: SettingsWindow(self, self.db, self.refresh, self.lang), style="Secondary.TButton").pack(side="left", padx=10)
+        ttk.Button(actions, text=("▣  Costi aggiuntivi e prezzo di vendita" if self.lang=="it" else "▣  Additional costs and selling price"), command=self.open_costs, style="Primary.TButton").pack(side="left", padx=10)
         self.status = tk.StringVar()
         ttk.Label(outer, textvariable=self.status, style="Status.TLabel").pack(anchor="w", pady=(16,0))
+
+    def open_costs(self):
+        if self.costs_window is not None and self.costs_window.winfo_exists():
+            self.costs_window.lift()
+            self.costs_window.focus_force()
+            return
+        self.costs_window = CostsWindow(self)
 
     def refresh(self):
         rows = self.db.filaments(); names = [r[1] for r in rows]; current = self.filament_var.get()
@@ -515,7 +526,9 @@ class App(tk.Tk):
             cell.fill = PatternFill("solid", fgColor="D9EAF7"); cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
         for col, value in enumerate(self._result_row(result, 1), 1): ws.cell(row=4, column=col, value=value)
         ws["K6"] = self.T["object_total"]; ws["K6"].font = Font(bold=True); ws["L6"] = "=SUM(L4:L4)"; ws["L6"].font = Font(size=14, bold=True)
-        self._format_excel_sheet(ws); wb.save(path)
+        self._format_excel_sheet(ws)
+        add_excel_details(wb, self.db, result, 1, self.lang)
+        wb.save(path)
 
     def _append_to_excel(self, path, result):
         try:
@@ -537,7 +550,9 @@ class App(tk.Tk):
         total_row = row_num + 2
         ws.cell(total_row,11,self.T["object_total"]); ws.cell(total_row,11).font = Font(bold=True)
         ws.cell(total_row,12,f"=SUM(L4:L{row_num})"); ws.cell(total_row,12).font = Font(size=14,bold=True)
-        self._format_excel_sheet(ws); wb.save(path)
+        self._format_excel_sheet(ws)
+        add_excel_details(wb, self.db, result, row_num - 3, self.lang)
+        wb.save(path)
 
     def _format_excel_sheet(self, ws):
         try:
@@ -579,6 +594,8 @@ class App(tk.Tk):
             self.last_result={"filament":self.filament_var.get(),"grams":grams,"price_per_kg":price_per_kg,
                               "total_hours":total_hours,"power_w":power_w,"kwh":kwh,"electricity":electricity,
                               "material_cost":material_cost,"energy_cost":energy_cost,"total":total}
+            if self.costs_window is not None and self.costs_window.winfo_exists():
+                self.costs_window.update_all()
         except ValueError as e:
             messagebox.showerror(T["error"],str(e),parent=self)
 
