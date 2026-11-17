@@ -59,29 +59,53 @@ class _SpoolPainter extends CustomPainter {
  }
  @override bool shouldRepaint(covariant CustomPainter oldDelegate)=>false;
 }
-class PrinterArt extends StatelessWidget{
- const PrinterArt({super.key});
- @override Widget build(BuildContext context)=>CustomPaint(size:const Size(145,130),painter:_PrinterPainter());
+class PrinterArt extends StatelessWidget {
+ const PrinterArt({super.key,this.width=175});final double width;
+ @override Widget build(BuildContext context)=>SizedBox(width:width,height:width*0.9,child:CustomPaint(painter:_PrinterPainter()));
 }
-class _PrinterPainter extends CustomPainter{
- @override void paint(Canvas c,Size s){
-  c.save();c.scale(s.width/145,s.height/130);
-  final line=Paint()..color=const Color(0xff17D9CF)..style=PaintingStyle.stroke..strokeWidth=4..strokeCap=StrokeCap.round;
-  final dark=Paint()..color=const Color(0xff125A70);
-  c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(15,9,115,8),const Radius.circular(3)),dark);
-  c.drawLine(const Offset(24,15),const Offset(24,108),line);
-  c.drawLine(const Offset(119,15),const Offset(119,108),line);
-  c.drawLine(const Offset(17,107),const Offset(129,107),line);
-  c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(50,26,60,17),const Radius.circular(4)),Paint()..color=const Color(0xff128E9E));
-  c.drawLine(const Offset(79,43),const Offset(79,54),line);
-  c.drawPath(Path()..moveTo(71,54)..lineTo(87,54)..lineTo(80,63)..close(),Paint()..color=const Color(0xff2DD4BF));
-  c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(30,92,84,9),const Radius.circular(4)),Paint()..color=const Color(0xff14949C));
-  final boat=Path()..moveTo(43,78)..lineTo(102,78)..lineTo(92,90)..lineTo(56,90)..close();
-  c.drawPath(boat,Paint()..color=const Color(0xff20D5C6));
-  c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(65,61,27,18),const Radius.circular(4)),Paint()..color=const Color(0xff1C9DAB));
-  c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(73,50,12,15),const Radius.circular(3)),Paint()..color=const Color(0xff1DE1D0));
-  c.drawCircle(const Offset(80,70),3,Paint()..color=const Color(0xff0B3947));
-  c.restore();
+class _PrinterPainter extends CustomPainter {
+ @override void paint(Canvas c,Size size){
+ c.save();c.scale(size.width/180,size.height/162);
+ Paint p(int hex)=>Paint()..color=Color(hex);
+ Paint stroke(int hex,double w)=>Paint()..color=Color(hex)..style=PaintingStyle.stroke..strokeWidth=w..strokeJoin=StrokeJoin.round;
+ Path polygon(List<Offset> points){final path=Path()..moveTo(points.first.dx,points.first.dy);for(final q in points.skip(1)){path.lineTo(q.dx,q.dy);}return path..close();}
+ c.drawOval(const Rect.fromLTWH(30,38,125,110),Paint()..color=const Color(0x774C3DFF)..maskFilter=const MaskFilter.blur(BlurStyle.normal,22));
+ c.drawOval(const Rect.fromLTWH(35,50,110,80),Paint()..color=const Color(0x6635EDE4)..maskFilter=const MaskFilter.blur(BlurStyle.normal,16));
+ // Three-dimensional chassis and LCD panel.
+ final base=polygon([const Offset(12,129),const Offset(137,129),const Offset(172,144),const Offset(44,155)]);
+ c.drawPath(base,p(0xff23365C));c.drawPath(base,stroke(0xff7E77EA,1.7));
+ c.drawPath(polygon([const Offset(44,155),const Offset(172,144),const Offset(172,155),const Offset(44,162)]),p(0xff111C36));
+ c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(134,142,27,13),const Radius.circular(2)),p(0xff0A1527));
+ c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(138,145,19,8),const Radius.circular(1)),p(0xff12DCD7));
+ // Illuminated build plate.
+ final bed=polygon([const Offset(31,111),const Offset(123,108),const Offset(150,121),const Offset(59,131)]);
+ c.drawPath(bed,p(0xff173C60));c.drawPath(bed,stroke(0xff44E9F3,2));
+ // Printed purple Benchy, with cabin and windows.
+ final hull=polygon([const Offset(59,104),const Offset(122,103),const Offset(109,120),const Offset(74,121)]);
+ c.drawPath(hull,Paint()..shader=const LinearGradient(colors:[Color(0xff34DBF6),Color(0xffA54CFA),Color(0xff5B32D0)]).createShader(const Rect.fromLTWH(59,102,63,19)));
+ c.drawPath(hull,stroke(0xffE6B3FF,1.4));
+ c.drawPath(polygon([const Offset(82,82),const Offset(109,82),const Offset(108,104),const Offset(83,105)]),p(0xff8851F2));
+ c.drawPath(polygon([const Offset(87,73),const Offset(105,73),const Offset(109,82),const Offset(82,82)]),p(0xffBC7FFF));
+ c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(87,86,11,11),const Radius.circular(2)),p(0xff132A4B));
+ c.drawRect(const Rect.fromLTWH(92,67,4,6),p(0xffDAB5FF));
+ c.drawCircle(const Offset(76,111),2.5,p(0xffE4B9FF));
+ // Gantry rails and upper frame.
+ for(final x in [19.0,148.0]){c.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(x,16,11,116),const Radius.circular(2)),p(0xff111A2E));c.drawRect(Rect.fromLTWH(x+2,21,3,104),p(0xff708AA6));c.drawLine(Offset(x+9,22),Offset(x+9,124),stroke(0xff18DDE6,1.6));}
+ c.drawPath(polygon([const Offset(17,15),const Offset(150,15),const Offset(160,26),const Offset(27,26)]),p(0xff485A7C));
+ c.drawPath(polygon([const Offset(27,26),const Offset(160,26),const Offset(160,35),const Offset(27,35)]),p(0xff0A172B));
+ c.drawLine(const Offset(30,28),const Offset(151,28),stroke(0xff50E6F3,2));
+ c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(28,49,126,7),const Radius.circular(3)),p(0xff566A8B));
+ // Printhead, cooling fan and hot nozzle.
+ c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(74,39,43,29),const Radius.circular(5)),p(0xff111B34));
+ c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(79,43,33,21),const Radius.circular(4)),p(0xff38517A));
+ c.drawCircle(const Offset(95,53),8,p(0xff0B1A30));
+ for(var i=0;i<5;i++){c.save();c.translate(95,53);c.rotate(i*1.256637);c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(-1.4,-7,3,6),const Radius.circular(1)),p(0xff59C9DF));c.restore();}
+ c.drawPath(polygon([const Offset(90,68),const Offset(100,68),const Offset(97,74),const Offset(93,74)]),p(0xffA9C8DC));
+ c.drawLine(const Offset(95,74),const Offset(95,79),stroke(0xff29FFF1,2));
+ c.drawCircle(const Offset(95,79),8,Paint()..color=const Color(0x9924F6E6)..maskFilter=const MaskFilter.blur(BlurStyle.normal,8));
+ // Mounted filament spool.
+ c.drawOval(const Rect.fromLTWH(132,3,23,29),p(0xff182344));c.drawOval(const Rect.fromLTWH(135,6,17,23),stroke(0xffB18AFF,2));c.drawOval(const Rect.fromLTWH(140,12,8,12),p(0xff21D5E4));
+ c.restore();
  }
  @override bool shouldRepaint(covariant CustomPainter oldDelegate)=>false;
 }
@@ -118,14 +142,14 @@ class Filament {Filament(this.name,this.price); String name; double price;}
 class CostApp extends StatefulWidget {const CostApp({super.key}); @override State<CostApp> createState()=>_CostState();}
 class _CostState extends State<CostApp>{
  final grams=TextEditingController(),hours=TextEditingController(text:'0'),minutes=TextEditingController(text:'0'),energy=TextEditingController(text:'0,15'),power=TextEditingController(text:'200');
- List<Filament> filaments=[]; List<ExtraCost> packaging=[],postProcessing=[]; String? selected; int tab=0; int extraTab=0; bool excelExpanded=false; bool english=false; double? material,kwh,electric,total; final markup=TextEditingController(text:'30'); bool includeExtras=true; bool useMargin=false;
+ List<Filament> filaments=[]; List<ExtraCost> packaging=[],postProcessing=[]; String? selected; int tab=0; int extraTab=0; bool excelExpanded=false; bool english=false; final Set<int> expandedSections={4}; double? material,kwh,electric,total; final markup=TextEditingController(text:'30'); bool includeExtras=true; bool useMargin=false;
  String tr(String it,String en)=>english?en:it;
  @override void initState(){super.initState();load();}
  Future<void> load()async{final p=await SharedPreferences.getInstance();try{filaments=(jsonDecode(p.getString('filaments')??'[]') as List).map((x)=>Filament(x['name'] as String,(x['price'] as num).toDouble())).toList();}catch(_){filaments=[];}energy.text=p.getString('energy')??'0,15';power.text=p.getString('power')??'200';english=p.getBool('english')??false;if(filaments.isNotEmpty)selected=filaments.first.name;try {packaging=(jsonDecode(p.getString('packaging_v11')??'[]') as List).map((x)=>ExtraCost(x['name'] as String,(x['price'] as num).toDouble(),enabled:x['enabled']!=false)).toList();postProcessing=(jsonDecode(p.getString('post_v11')??'[]') as List).map((x)=>ExtraCost(x['name'] as String,(x['price'] as num).toDouble(),enabled:x['enabled']!=false)).toList();}catch(_){packaging=[];postProcessing=[];}markup.text=p.getString('markup_v11')??'30';includeExtras=p.getBool('include_v11')??true;useMargin=p.getBool('margin_v11')??false;if(mounted)setState((){});}
  Future<void> save()async{final p=await SharedPreferences.getInstance();await p.setString('filaments',jsonEncode(filaments.map((f)=>{'name':f.name,'price':f.price}).toList()));await p.setString('energy',energy.text);await p.setString('power',power.text);await p.setBool('english',english);await p.setString('packaging_v11',jsonEncode(packaging.map((x)=>x.toJson()).toList()));await p.setString('post_v11',jsonEncode(postProcessing.map((x)=>x.toJson()).toList()));await p.setString('markup_v11',markup.text);await p.setBool('include_v11',includeExtras);await p.setBool('margin_v11',useMargin);}
  void msg(String s)=>ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(s)));
  Widget field(String title,TextEditingController c)=>TextField(controller:c,keyboardType:const TextInputType.numberWithOptions(decimal:true),decoration:InputDecoration(labelText:title,filled:true,fillColor:const Color(0xff202F46),border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:const BorderSide(color:Color(0xff54708A))),enabledBorder:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:const BorderSide(color:Color(0xff53677F)))));
- Widget card(String title,Widget child,{IconData icon=Icons.layers_outlined})=>Container(margin:const EdgeInsets.only(bottom:16),padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(begin:Alignment.topLeft,end:Alignment.bottomRight,colors:[Color(0xff172E45),Color(0xff151C36)]),borderRadius:BorderRadius.circular(24),border:Border.all(color:const Color(0xff29576B),width:1.2),boxShadow:const [BoxShadow(color:Color(0x44000000),blurRadius:16,offset:Offset(0,8))]),child:Stack(children:[if(icon==Icons.print_outlined)Positioned(right:-14,top:-20,child:Opacity(opacity:0.24,child:const PrinterArt())),Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(children:[Icon(icon,color:teal,size:25),const SizedBox(width:10),Expanded(child:Text(title,style:const TextStyle(fontSize:19,fontWeight:FontWeight.w800)))]),const SizedBox(height:18),child])]));
+ Widget card(String title,Widget child,{IconData icon=Icons.layers_outlined})=>Container(margin:const EdgeInsets.only(bottom:16),padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(begin:Alignment.topLeft,end:Alignment.bottomRight,colors:[Color(0xff172E45),Color(0xff151C36)]),borderRadius:BorderRadius.circular(24),border:Border.all(color:const Color(0xff29576B),width:1.2),boxShadow:const [BoxShadow(color:Color(0x44000000),blurRadius:16,offset:Offset(0,8))]),child:Stack(children:[if(icon==Icons.print_outlined)Positioned(right:0,top:0,child:Opacity(opacity:0.94,child:const PrinterArt(width:150))),Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(children:[Icon(icon,color:teal,size:25),const SizedBox(width:10),Expanded(child:Text(title,style:const TextStyle(fontSize:19,fontWeight:FontWeight.w800)))]),const SizedBox(height:18),child])]));
  Widget btn(String title,VoidCallback fn,{IconData icon=Icons.calculate_outlined})=>SizedBox(width:double.infinity,child:Container(decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xff16D6BD),Color(0xff3187D4),Color(0xff9645E8)]),borderRadius:BorderRadius.circular(28)),child:FilledButton.icon(style:FilledButton.styleFrom(backgroundColor:Colors.transparent,shadowColor:Colors.transparent,foregroundColor:Colors.white,padding:const EdgeInsets.symmetric(vertical:16)),onPressed:fn,icon:Icon(icon),label:Text(title,style:const TextStyle(fontWeight:FontWeight.bold)))));
  Widget metric(String label,String value,IconData icon)=>Expanded(child:Column(children:[Icon(icon,color:teal,size:23),const SizedBox(height:7),Text(label,textAlign:TextAlign.center,style:const TextStyle(fontSize:11,color:Color(0xffC5D3E4))),const SizedBox(height:5),FittedBox(fit:BoxFit.scaleDown,child:Text(value,style:const TextStyle(fontWeight:FontWeight.bold,fontSize:16)))]));
  void calculate(){final g=parse(grams.text),h=parse(hours.text),m=parse(minutes.text),e=parse(energy.text),w=parse(power.text);if(selected==null||[g,h,m,e,w].any((x)=>x==null||!x!.isFinite||x<0)||m!>=60){msg(tr('Controlla i dati e seleziona un filamento.','Check inputs and select a filament.'));return;}final f=filaments.firstWhere((x)=>x.name==selected);setState((){material=g!/1000*f.price;kwh=w!/1000*(h!+m!/60);electric=kwh!*e!;total=material!+electric!;});}
@@ -170,37 +194,37 @@ class _CostState extends State<CostApp>{
   const SizedBox(height:16),extrasSection(extraTab==0?tr('Voci di imballaggio','Packaging items'):tr('Voci post-produzione','Post-processing items'),extraTab==0?packaging:postProcessing,extraTab==0?Icons.inventory_2_outlined:Icons.brush_outlined),
   const PackagingArt(),const SizedBox(height:12),Text(tr('Le voci vengono salvate sul dispositivo. Puoi attivarle o disattivarle per il calcolo.','Items are saved on your device. Toggle them to include or exclude from calculations.'),textAlign:TextAlign.center,style:const TextStyle(color:Colors.white60))
  ]);
+ Widget accordion(int index,String title,String subtitle,IconData icon,Widget child){
+ final open=expandedSections.contains(index);
+ return Container(margin:const EdgeInsets.only(bottom:9),decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xff162E48),Color(0xff151D36)]),borderRadius:BorderRadius.circular(17),border:Border.all(color:open?teal:const Color(0xff2B6C83),width:1.2)),child:Column(children:[
+ InkWell(borderRadius:BorderRadius.circular(17),onTap:()=>setState((){if(open){expandedSections.remove(index);}else{expandedSections.add(index);}}),child:Padding(padding:const EdgeInsets.symmetric(horizontal:13,vertical:12),child:Row(children:[Icon(icon,color:teal,size:26),const SizedBox(width:12),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(title,style:const TextStyle(fontSize:17,fontWeight:FontWeight.w800)),const SizedBox(height:2),Text(subtitle,style:const TextStyle(fontSize:12,color:Color(0xffC4D3E6)))])),Icon(open?Icons.keyboard_arrow_up_rounded:Icons.keyboard_arrow_down_rounded,color:Colors.white70,size:27)]))),
+ if(open)Padding(padding:const EdgeInsets.fromLTRB(14,0,14,14),child:Column(children:[const Divider(color:Color(0xff31566D)),child]))
+ ]));
+ }
  Widget calculator()=>ListView(padding:const EdgeInsets.fromLTRB(14,10,14,26),children:[
  card(tr('Dati della stampa','Print details'),Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+ const SizedBox(height:118),
  Text(tr('Filamento','Filament'),style:const TextStyle(fontWeight:FontWeight.w700,fontSize:14)),
  const SizedBox(height:5),
  DropdownButtonFormField<String>(value:selected,decoration:InputDecoration(prefixIcon:const Icon(Icons.cable_outlined,color:teal),contentPadding:const EdgeInsets.symmetric(vertical:13,horizontal:12),border:OutlineInputBorder(borderRadius:BorderRadius.circular(12))),items:filaments.map((f)=>DropdownMenuItem(value:f.name,child:Text(f.name))).toList(),onChanged:(v)=>setState(()=>selected=v)),
  const SizedBox(height:12),field(tr('Filamento totale (g)','Total filament (g)'),grams),const SizedBox(height:12),
  Row(children:[Expanded(child:field(tr('Ore','Hours'),hours)),const SizedBox(width:12),Expanded(child:field(tr('Minuti','Minutes'),minutes))]),
  const SizedBox(height:16),btn(tr('CALCOLA COSTO','CALCULATE COST'),calculate)]),icon:Icons.print_outlined),
- card(tr('Costi di produzione','Production costs'),Column(children:[detailLine(tr('Filamento','Filament'),material),detailLine(tr('Energia elettrica','Electricity'),electric),const Divider(),detailLine(tr('Totale produzione','Production total'),total,prominent:true)]),icon:Icons.precision_manufacturing_outlined),
- card(tr('Spese di imballaggio','Packaging costs'),Column(children:[detailLine(tr('Voci attive','Enabled items'),packingTotal),TextButton.icon(onPressed:()=>setState((){tab=2;extraTab=0;}),icon:const Icon(Icons.edit_outlined),label:Text(tr('Gestisci imballaggio','Manage packaging')))]),icon:Icons.inventory_2_outlined),
- card(tr('Post-produzione','Post-processing'),Column(children:[detailLine(tr('Voci attive','Enabled items'),postTotal),TextButton.icon(onPressed:()=>setState((){tab=2;extraTab=1;}),icon:const Icon(Icons.edit_outlined),label:Text(tr('Gestisci post-produzione','Manage post-processing')))]),icon:Icons.brush_outlined),
- card(tr('Prezzo di vendita','Selling price'),Column(children:[
+ accordion(0,tr('Costi di produzione','Production costs'),total==null?tr('Filamento + energia','Filament + energy'):euro(total!),Icons.precision_manufacturing_outlined,Column(children:[detailLine(tr('Filamento','Filament'),material),detailLine(tr('Energia elettrica','Electricity'),electric),const Divider(),detailLine(tr('Totale produzione','Production total'),total,prominent:true) ])),
+ accordion(1,tr('Spese di imballaggio','Packaging costs'),euro(packingTotal),Icons.inventory_2_outlined,Column(children:[detailLine(tr('Voci attive','Enabled items'),packingTotal),TextButton.icon(onPressed:()=>setState((){tab=2;extraTab=0;}),icon:const Icon(Icons.edit_outlined),label:Text(tr('Gestisci imballaggio','Manage packaging'))) ])),
+ accordion(2,tr('Post-produzione','Post-processing'),euro(postTotal),Icons.brush_outlined,Column(children:[detailLine(tr('Voci attive','Enabled items'),postTotal),TextButton.icon(onPressed:()=>setState((){tab=2;extraTab=1;}),icon:const Icon(Icons.edit_outlined),label:Text(tr('Gestisci post-produzione','Manage post-processing'))) ])),
+ accordion(3,tr('Prezzo di vendita','Selling price'),tr('Ricarico o margine','Markup or margin'),Icons.sell_outlined,Column(children:[
  SwitchListTile(contentPadding:EdgeInsets.zero,title:Text(tr('Includi imballaggio e post-produzione','Include packaging and post-processing')),value:includeExtras,onChanged:(v){setState(()=>includeExtras=v);save();}),
  SegmentedButton<bool>(segments:[ButtonSegment(value:false,label:Text(tr('Ricarico','Markup'))),ButtonSegment(value:true,label:Text(tr('Margine','Margin')))],selected:{useMargin},onSelectionChanged:(v){setState(()=>useMargin=v.first);save();}),
  const SizedBox(height:12),TextField(controller:markup,keyboardType:const TextInputType.numberWithOptions(decimal:true),decoration:InputDecoration(labelText:tr('Percentuale (%)','Percentage (%)'),suffixText:'%',border:const OutlineInputBorder()),onChanged:(_){setState((){});save();}),
  const SizedBox(height:10),Text(tr('Ricarico: percentuale sul costo. Margine: percentuale sul prezzo finale.','Markup: percentage of cost. Margin: percentage of final selling price.'),style:const TextStyle(color:Colors.white60,fontSize:12)),
- ]),icon:Icons.sell_outlined),
- card(tr('Riepilogo completo','Full summary'),Column(children:[
+  ])),
+ accordion(4,tr('Riepilogo completo','Full summary'),completeCost==null?'—':euro(completeCost!),Icons.auto_graph_outlined,Column(children:[
  detailLine(tr('Produzione','Production'),total),detailLine(tr('Imballaggio','Packaging'),packingTotal),detailLine(tr('Post-produzione','Post-processing'),postTotal),
  const Divider(),detailLine(tr('Costo complessivo','Total cost'),completeCost,prominent:true),
  detailLine(tr('Guadagno stimato','Estimated profit'),salePrice==null||completeCost==null?null:salePrice!-completeCost!),
  const SizedBox(height:8),Container(width:double.infinity,padding:const EdgeInsets.all(14),decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xff007F80),Color(0xff5936BB)]),borderRadius:BorderRadius.circular(15)),child:Column(children:[Text(tr('PREZZO DI VENDITA CONSIGLIATO','SUGGESTED SELLING PRICE'),style:const TextStyle(fontWeight:FontWeight.bold,fontSize:12)),const SizedBox(height:5),Text(salePrice==null?'—':euro(salePrice!),style:const TextStyle(fontSize:30,fontWeight:FontWeight.w900))])),
- ]),icon:Icons.auto_graph_outlined),
- card(tr('Riepilogo','Summary'),Column(children:[
- Container(padding:const EdgeInsets.symmetric(vertical:14,horizontal:5),decoration:BoxDecoration(color:const Color(0xff20314D),borderRadius:BorderRadius.circular(17)),child:Row(crossAxisAlignment:CrossAxisAlignment.start,children:[
- metric(tr('Costo filamento','Filament cost'),material==null?'—':euro(material!),Icons.layers_outlined),
- Container(height:75,width:1,color:const Color(0xff54637B)),
- metric(tr('Energia stimata','Estimated energy'),kwh==null?'—':'${kwh!.toStringAsFixed(3)} kWh',Icons.bolt),
- Container(height:75,width:1,color:const Color(0xff54637B)),
- metric(tr('Costo corrente','Electricity cost'),electric==null?'—':euro(electric!),Icons.power_outlined)])),
- const SizedBox(height:12),Container(width:double.infinity,padding:const EdgeInsets.symmetric(horizontal:12,vertical:18),decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xff063E49),Color(0xff08575A)]),borderRadius:BorderRadius.circular(17),border:Border.all(color:teal,width:1.5)),child:Row(children:[const Icon(Icons.monetization_on,color:Color(0xffFCD34D),size:27),const SizedBox(width:8),Expanded(child:Text(tr('COSTO TOTALE','TOTAL COST'),style:const TextStyle(fontSize:14,fontWeight:FontWeight.w800))),FittedBox(child:Text(total==null?'—':euro(total!),style:const TextStyle(fontSize:27,color:teal,fontWeight:FontWeight.w900)))]))]),icon:Icons.bar_chart_rounded),
+  ])),
  Container(decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xff05BFAF),Color(0xff3E8CD4),Color(0xff923DE0)]),borderRadius:BorderRadius.circular(25)),padding:const EdgeInsets.all(2),child:Column(children:[
  InkWell(onTap:()=>setState(()=>excelExpanded=!excelExpanded),child:Padding(padding:const EdgeInsets.symmetric(vertical:14,horizontal:14),child:Row(children:[const Icon(Icons.description_outlined,color:Colors.white),const SizedBox(width:10),Expanded(child:Text(tr('SALVA / ESPORTA EXCEL','SAVE / EXPORT EXCEL'),style:const TextStyle(fontWeight:FontWeight.w800,fontSize:15))),Icon(excelExpanded?Icons.keyboard_arrow_up:Icons.keyboard_arrow_down)]))),
  if(excelExpanded)Container(padding:const EdgeInsets.symmetric(horizontal:12,vertical:4),decoration:BoxDecoration(color:const Color(0xff1B2D46),borderRadius:BorderRadius.circular(22)),child:Column(children:[
