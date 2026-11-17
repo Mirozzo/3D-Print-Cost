@@ -475,9 +475,29 @@ class App(tk.Tk):
         ttk.Button(result_card, text="▣  " + T["save_excel"], command=self.save_result_excel, style="Excel.TButton").pack(fill="x", pady=(8,0))
 
         actions = ttk.Frame(outer, padding=(0,22,0,0), style="App.TFrame"); actions.pack(fill="x")
-        ttk.Button(actions, text=T["manage_filaments"], command=lambda: FilamentManager(self, self.db, self.refresh, self.lang), style="Secondary.TButton").pack(side="left")
-        ttk.Button(actions, text=T["current_settings"], command=lambda: SettingsWindow(self, self.db, self.refresh, self.lang), style="Secondary.TButton").pack(side="left", padx=10)
-        ttk.Button(actions, text=("Costi aggiuntivi e prezzo di vendita" if self.lang=="it" else "Additional costs and selling price"), command=self.open_costs, style="Primary.TButton").pack(side="left", padx=10)
+        # Native Tk buttons avoid Windows/ttk theme foreground rendering glitches.
+        def action_button(label, command, primary=False):
+            bg = "#2DD4BF" if primary else "#1D2A3D"
+            fg = "#07140B" if primary else "#FFFFFF"
+            button = tk.Button(
+                actions, text=label, command=command,
+                font=("Bahnschrift SemiBold", 11),
+                bg=bg, fg=fg, activebackground="#14B8A6" if primary else "#293A52",
+                activeforeground=fg, disabledforeground="#94A3B8",
+                relief="flat", bd=0, highlightthickness=0,
+                cursor="hand2", padx=20, pady=12,
+                takefocus=True
+            )
+            button.pack(side="left", padx=(0, 12))
+            return button
+
+        action_button(T["manage_filaments"],
+                      lambda: FilamentManager(self, self.db, self.refresh, self.lang))
+        action_button(T["current_settings"],
+                      lambda: SettingsWindow(self, self.db, self.refresh, self.lang))
+        action_button(("Costi aggiuntivi e prezzo di vendita" if self.lang=="it"
+                       else "Additional costs and selling price"),
+                      self.open_costs, primary=True)
         self.status = tk.StringVar()
         ttk.Label(outer, textvariable=self.status, style="Status.TLabel").pack(anchor="w", pady=(16,0))
 
