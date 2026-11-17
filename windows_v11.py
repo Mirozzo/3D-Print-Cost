@@ -132,9 +132,13 @@ class CostsWindow(tk.Toplevel):
         self.lang=parent.lang
         self.T=TEXT[self.lang]
         self.title("3D Print Cost v1.1 — "+self.T["title"])
-        self.geometry("1040x750")
+        self.geometry("1100x790")
         self.minsize(850,610)
         self.configure(bg="#0B1120")
+        try:
+            self.iconbitmap(parent.iconbitmap())
+        except (tk.TclError, TypeError):
+            pass
         self.transient(parent)
         self.protocol("WM_DELETE_WINDOW",self.close)
         self.mode=tk.StringVar(value=self.db.get_setting("sales_mode") or "markup")
@@ -155,9 +159,14 @@ class CostsWindow(tk.Toplevel):
     def build(self):
         head=tk.Frame(self,bg="#0B1120")
         head.pack(fill="x",padx=24,pady=(18,8))
-        tk.Label(head,text=self.T["title"],bg="#0B1120",fg="#5EEAD4",
-                 font=("Bahnschrift SemiBold",22)).pack(anchor="w")
-        self.tabs=ttk.Notebook(self)
+        tk.Label(head,text="◈  3D PRINT COST   /   v1.1",bg="#0B1120",fg="#4DE8DA",font=("Bahnschrift SemiBold",14)).pack(anchor="w")
+        tk.Label(head,text=self.T["title"],bg="#0B1120",fg="#F8FAFC",font=("Bahnschrift SemiBold",25)).pack(anchor="w",pady=(3,6))
+        style=ttk.Style(self)
+        style.configure("V11.TNotebook",background="#0B1120",borderwidth=0)
+        style.configure("V11.TNotebook.Tab",padding=(23,13),font=("Bahnschrift SemiBold",11))
+        style.configure("V11.Treeview",rowheight=35,font=("Bahnschrift",11))
+        style.configure("V11.Treeview.Heading",font=("Bahnschrift SemiBold",11))
+        self.tabs=ttk.Notebook(self,style="V11.TNotebook")
         self.tabs.pack(fill="both",expand=True,padx=22,pady=(6,12))
         for category,title in (("packaging",self.T["pack"]),("post",self.T["post"])):
             self.build_expenses(category,title)
@@ -165,9 +174,9 @@ class CostsWindow(tk.Toplevel):
 
     def build_expenses(self, category, title):
         tab=tk.Frame(self.tabs,bg="#151E2E")
-        self.tabs.add(tab,text="  "+title+"  ")
+        self.tabs.add(tab,text=("  ▣  " if category=="packaging" else "  ✦  ")+title+"  ")
         self.label(tab,title,font=("Bahnschrift SemiBold",17)).pack(anchor="w",padx=20,pady=(16,10))
-        tree=ttk.Treeview(tab,columns=("name","amount","enabled"),show="headings",height=10)
+        tree=ttk.Treeview(tab,columns=("name","amount","enabled"),show="headings",height=10,style="V11.Treeview")
         for col,label in (("name",self.T["name"]),("amount",self.T["cost"]),("enabled",self.T["active"])):
             tree.heading(col,text=label)
         tree.column("name",width=470)
@@ -198,33 +207,69 @@ class CostsWindow(tk.Toplevel):
         self.trees[category]=(tree,total)
         self.forms[category]=(name,amount,enabled)
 
+    def _card(self, parent, title, accent="#36D7D1"):
+        outer=tk.Frame(parent,bg="#263F61",padx=1,pady=1)
+        inner=tk.Frame(outer,bg="#18283E",padx=17,pady=13)
+        inner.pack(fill="both",expand=True)
+        tk.Label(inner,text=title,bg="#18283E",fg=accent,font=("Bahnschrift SemiBold",14)).pack(anchor="w",pady=(0,11))
+        return outer,inner
+
+    def _line(self, parent, label, key, emphasized=False):
+        row=tk.Frame(parent,bg="#18283E")
+        row.pack(fill="x",pady=5)
+        tk.Label(row,text=label,bg="#18283E",fg="#E1EAF6",font=("Bahnschrift SemiBold" if emphasized else "Bahnschrift",11)).pack(side="left")
+        val=tk.Label(row,text="—",bg="#18283E",fg="#54E4D7" if emphasized else "#FFFFFF",font=("Bahnschrift SemiBold",16 if emphasized else 12))
+        val.pack(side="right")
+        self.result_labels[key]=val
+
     def build_selling(self):
-        tab=tk.Frame(self.tabs,bg="#151E2E")
-        self.tabs.add(tab,text="  "+self.T["selling"]+"  ")
-        panel=tk.Frame(tab,bg="#151E2E")
-        panel.pack(fill="both",expand=True,padx=26,pady=18)
-        ttk.Checkbutton(panel,text=self.T["include"],variable=self.include,
-                        command=self.changed).pack(anchor="w",pady=(0,15))
+        tab=tk.Frame(self.tabs,bg="#101A2B")
+        self.tabs.add(tab,text="  ◈  "+self.T["selling"]+"  ")
+        outer=tk.Frame(tab,bg="#101A2B")
+        outer.pack(fill="both",expand=True,padx=18,pady=16)
+        outer.grid_columnconfigure(0,weight=5)
+        outer.grid_columnconfigure(1,weight=6)
+        outer.grid_rowconfigure(0,weight=1)
+        left=tk.Frame(outer,bg="#101A2B")
+        left.grid(row=0,column=0,sticky="nsew",padx=(0,9))
+        right=tk.Frame(outer,bg="#101A2B")
+        right.grid(row=0,column=1,sticky="nsew",padx=(9,0))
+        settings,config=self._card(left,"⚙  "+self.T["selling"])
+        settings.pack(fill="x",pady=(0,12))
+        ttk.Checkbutton(config,text=self.T["include"],variable=self.include,command=self.changed).pack(anchor="w",pady=(0,14))
+        tk.Label(config,text=("MODALITÀ DI CALCOLO" if self.lang=="it" else "PRICING METHOD"),bg="#18283E",fg="#B6C7DB",font=("Bahnschrift SemiBold",10)).pack(anchor="w",pady=(0,7))
+        switch=tk.Frame(config,bg="#18283E")
+        switch.pack(fill="x",pady=(0,10))
         for label,value in ((self.T["markup"],"markup"),(self.T["margin"],"margin")):
-            ttk.Radiobutton(panel,text=label,variable=self.mode,value=value,
-                            command=self.changed).pack(anchor="w",pady=4)
-        row=tk.Frame(panel,bg="#151E2E")
-        row.pack(anchor="w",pady=(12,10))
-        self.label(row,self.T["percent"]).pack(side="left",padx=(0,10))
-        entry=ttk.Entry(row,textvariable=self.percent,width=13)
-        entry.pack(side="left")
+            ttk.Radiobutton(switch,text=label,variable=self.mode,value=value,command=self.changed).pack(anchor="w",pady=5)
+        tk.Label(config,text=self.T["percent"],bg="#18283E",fg="#F8FAFC",font=("Bahnschrift SemiBold",11)).pack(anchor="w",pady=(7,6))
+        entry=ttk.Entry(config,textvariable=self.percent,width=15,font=("Bahnschrift SemiBold",17))
+        entry.pack(anchor="w",ipady=5)
         entry.bind("<KeyRelease>",lambda _e:self.changed())
-        self.label(panel,self.T["hint"],fg="#94A3B8").pack(anchor="w",pady=(0,16))
+        tk.Label(config,text=self.T["hint"],bg="#18283E",fg="#B2C5D8",font=("Bahnschrift",10),wraplength=340,justify="left").pack(anchor="w",pady=(12,0))
+        detail,detail_body=self._card(left,"▤  "+self.T["production"])
+        detail.pack(fill="x")
         self.result_labels={}
-        for key in ("material","electric","production","pack_total","post_total","all_total","profit","sale"):
-            row=tk.Frame(panel,bg="#151E2E")
-            row.pack(fill="x",pady=5)
-            self.label(row,self.T.get(key,key),font=("Bahnschrift SemiBold",12) if key in ("all_total","sale") else ("Bahnschrift",11)).pack(side="left")
-            value=self.label(row,"—",font=("Bahnschrift SemiBold",19) if key=="sale" else ("Bahnschrift",12),
-                             fg="#5EEAD4" if key in ("all_total","sale") else "#F8FAFC")
-            value.pack(side="right")
-            self.result_labels[key]=value
-        ttk.Button(panel,text=self.T["refresh"],command=self.update_all).pack(anchor="e",pady=14)
+        self._line(detail_body,self.T["material"],"material")
+        self._line(detail_body,self.T["electric"],"electric")
+        self._line(detail_body,self.T["production"],"production",True)
+        summary,summary_body=self._card(right,"▤  "+("Riepilogo completo" if self.lang=="it" else "Full summary"))
+        summary.pack(fill="x",pady=(0,12))
+        self._line(summary_body,self.T["production"],"production_summary")
+        self._line(summary_body,self.T["pack_total"],"pack_total")
+        self._line(summary_body,self.T["post_total"],"post_total")
+        tk.Frame(summary_body,bg="#355778",height=1).pack(fill="x",pady=8)
+        self._line(summary_body,self.T["all_total"],"all_total",True)
+        self._line(summary_body,self.T["profit"],"profit",True)
+        banner=tk.Frame(right,bg="#2859A1",padx=2,pady=2)
+        banner.pack(fill="x",pady=(0,12))
+        banner_inner=tk.Frame(banner,bg="#174A80",padx=17,pady=20)
+        banner_inner.pack(fill="both",expand=True)
+        tk.Label(banner_inner,text="✦  "+self.T["sale"],bg="#174A80",fg="#C9FCF5",font=("Bahnschrift SemiBold",12)).pack(anchor="w")
+        sale=tk.Label(banner_inner,text="—",bg="#174A80",fg="#FFFFFF",font=("Bahnschrift SemiBold",37))
+        sale.pack(anchor="w",pady=(8,2))
+        self.result_labels["sale"]=sale
+        ttk.Button(right,text="↻  "+self.T["refresh"],command=self.update_all).pack(anchor="e",pady=6)
 
     def clear_form(self,category):
         name,amount,enabled=self.forms[category]
@@ -307,7 +352,7 @@ class CostsWindow(tk.Toplevel):
         if not result:
             for label in self.result_labels.values():label.config(text="—")
             return
-        mapping={"material":info["material"],"electric":info["electricity"],"production":info["production"],
+        mapping={"material":info["material"],"electric":info["electricity"],"production":info["production"],"production_summary":info["production"],
                  "pack_total":info["packaging"],"post_total":info["post"],"all_total":info["total"],
                  "profit":info["profit"],"sale":info["price"]}
         for key,value in mapping.items():
