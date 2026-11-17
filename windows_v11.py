@@ -150,7 +150,7 @@ class CostsWindow(tk.Toplevel):
         self.destroy()
 
     def label(self, container, text, **kwargs):
-        return tk.Label(container,text=text,bg="#151E2E",fg="#F8FAFC",font=("Bahnschrift",11),**kwargs)
+        return tk.Label(container,text=text,bg="#151E2E",**({"fg":"#F8FAFC","font":("Bahnschrift",11)} | kwargs))
 
     def build(self):
         head=tk.Frame(self,bg="#0B1120")
