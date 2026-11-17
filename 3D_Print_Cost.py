@@ -425,41 +425,68 @@ class App(tk.Tk):
         self.option_add("*TCombobox*Listbox.selectForeground", TEXT)
 
     def draw_header_illustrations(self, parent):
-        """Draw filament spool and FDM printer as crisp vector artwork (no external assets)."""
-        canvas = tk.Canvas(parent, width=342, height=110, bg="#0B1120",
-                           highlightthickness=0, bd=0)
-        canvas.pack(side="right", anchor="ne", padx=(12, 0))
-        # Spool: horizontal cylindrical body, wound filament and elliptical flange.
-        canvas.create_polygon(48, 30, 115, 37, 115, 85, 48, 78,
-                              fill="#123F5A", outline="#38BDF8", width=2)
-        for y in range(40, 77, 5):
-            canvas.create_line(55, y, 109, y+4, fill="#2DD4BF", width=1)
-        canvas.create_oval(22, 25, 66, 86, fill="#163C62",
-                           outline="#5EEAD4", width=3)
-        canvas.create_oval(32, 37, 56, 73, fill="#0B1120",
-                           outline="#38BDF8", width=2)
-        canvas.create_oval(39, 49, 49, 61, fill="#5EEAD4", outline="")
-        canvas.create_line(44, 28, 44, 44, fill="#38BDF8", width=3)
-        canvas.create_line(27, 70, 36, 63, fill="#38BDF8", width=3)
-        canvas.create_line(60, 69, 52, 62, fill="#38BDF8", width=3)
-        canvas.create_line(115, 82, 132, 87, 141, 83, 147, 91,
-                           smooth=True, fill="#5EEAD4", width=2)
-        # Printer: frame, gantry, toolhead, build plate and printed part.
-        canvas.create_rectangle(188, 17, 319, 97, outline="#38BDF8", width=3)
-        canvas.create_line(199, 29, 309, 29, fill="#5EEAD4", width=3)
-        canvas.create_line(205, 29, 205, 82, fill="#355A7A", width=3)
-        canvas.create_line(302, 29, 302, 82, fill="#355A7A", width=3)
-        canvas.create_rectangle(240, 26, 270, 47, fill="#225078",
-                                outline="#5EEAD4", width=2)
-        canvas.create_polygon(248, 47, 262, 47, 256, 58,
-                              fill="#38BDF8", outline="")
-        canvas.create_line(204, 85, 304, 85, fill="#5EEAD4", width=4)
-        canvas.create_polygon(238, 83, 238, 69, 249, 61, 272, 69, 272, 83,
-                              fill="#244A80", outline="#38BDF8", width=2)
-        canvas.create_line(249, 61, 249, 83, fill="#5EEAD4", width=1)
-        canvas.create_line(272, 69, 249, 75, 238, 69, fill="#5EEAD4", width=1)
-        canvas.create_line(215, 99, 292, 99, fill="#2DD4BF", width=3)
-        return canvas
+        """Large, layered neon illustrations of a filament spool and FDM printer."""
+        c = tk.Canvas(parent, width=475, height=166, bg="#0B1120",
+                      highlightthickness=0, bd=0)
+        c.pack(side="right", anchor="ne", padx=(16, 0))
+        # Two floating illustration cards, with offset shadows and luminous outlines.
+        for x0,x1 in ((5,223),(239,469)):
+            c.create_rectangle(x0+4,11,x1+4,158,fill="#07101E",outline="")
+            c.create_rectangle(x0,6,x1,153,fill="#101F34",outline="#244763",width=2)
+            c.create_line(x0+15,7,x1-15,7,fill="#256D88",width=2)
+        # FILAMENT SPOOL: dimensional barrel with individual thread windings.
+        c.create_oval(72,38,199,131,fill="#0B1B2D",outline="#185979",width=2)
+        c.create_polygon(78,41,173,45,192,62,192,113,173,131,78,127,
+                         fill="#154B70",outline="#54D8ED",width=3)
+        c.create_polygon(92,48,174,51,182,61,182,114,174,123,92,120,
+                         fill="#256D96",outline="#6DE5F0",width=2)
+        for i in range(14):
+            x=98+i*5.4
+            c.create_line(x,51,x+2,120,fill="#35C6D9" if i%2 else "#84E9F1",width=2)
+        for y in (61,73,85,97,109):
+            c.create_line(96,y,179,y+1,fill="#143E66",width=2)
+        c.create_oval(36,36,108,133,fill="#1A6590",outline="#83F5F0",width=4)
+        c.create_oval(44,45,100,124,fill="#102A48",outline="#49D8F0",width=2)
+        # Flange spokes, central hub and highlights.
+        for pts in ((72,50,72,69),(49,84,62,84),(82,100,91,112)):
+            c.create_line(*pts,fill="#6CEAE9",width=6,capstyle="round")
+        c.create_oval(61,73,83,96,fill="#62E7EA",outline="#D5FFFA",width=2)
+        c.create_oval(68,80,76,89,fill="#102B46",outline="")
+        c.create_arc(39,38,106,131,start=80,extent=115,style="arc",outline="#C1FFFA",width=3)
+        c.create_line(191,116,207,127,214,123,220,131,smooth=True,
+                      fill="#64F4E8",width=3,capstyle="round")
+        c.create_text(114,145,text="FILAMENT",fill="#8DB6D3",
+                      font=("Bahnschrift SemiBold",10))
+        # FDM PRINTER: perspective frame, gantry, nozzle, glowing print.
+        c.create_polygon(282,33,417,33,433,46,299,46,
+                         fill="#234F75",outline="#72DDF2",width=2)
+        c.create_polygon(282,33,299,46,299,126,282,115,
+                         fill="#16344F",outline="#3989B3",width=3)
+        c.create_polygon(417,33,433,46,433,126,417,115,
+                         fill="#15314D",outline="#3989B3",width=3)
+        c.create_line(282,33,417,33,fill="#B3FAF6",width=4)
+        c.create_line(299,46,433,46,fill="#50D9F0",width=3)
+        c.create_line(282,115,417,115,433,126,299,126,282,115,
+                      fill="#60E3EC",width=3)
+        c.create_line(311,56,411,56,fill="#7AF5EE",width=4)
+        c.create_line(312,59,312,105,fill="#386C8B",width=3)
+        c.create_line(412,59,412,105,fill="#386C8B",width=3)
+        c.create_rectangle(351,50,378,73,fill="#1E6A90",outline="#8DF8F2",width=2)
+        c.create_rectangle(356,54,373,66,fill="#3FB2D5",outline="")
+        c.create_polygon(358,73,371,73,364,83,fill="#B4FAF5",outline="")
+        c.create_line(364,83,364,91,fill="#7BF8E7",width=2)
+        c.create_polygon(324,111,342,102,396,102,408,111,397,118,337,118,
+                         fill="#2A6796",outline="#73E4F2",width=2)
+        c.create_polygon(352,104,352,93,363,86,381,93,381,104,
+                         fill="#21B5C9",outline="#B2FDF4",width=2)
+        c.create_line(363,86,363,101,fill="#E0FFFB",width=2)
+        c.create_line(352,93,363,99,381,93,fill="#B2FDF4",width=2)
+        c.create_line(321,132,412,132,fill="#54D9EC",width=3)
+        c.create_oval(309,128,316,135,fill="#7CF8ED",outline="")
+        c.create_oval(416,128,423,135,fill="#7CF8ED",outline="")
+        c.create_text(356,145,text="3D PRINTER",fill="#8DB6D3",
+                      font=("Bahnschrift SemiBold",10))
+        return c
 
     def build_ui(self):
         T = self.T
