@@ -59,6 +59,34 @@ class _PrinterPainter extends CustomPainter{
  @override bool shouldRepaint(covariant CustomPainter oldDelegate)=>false;
 }
 class ExtraCost { ExtraCost(this.name,this.price,{this.enabled=true}); String name; double price; bool enabled; Map<String,dynamic> toJson()=>{'name':name,'price':price,'enabled':enabled}; }
+
+// Decorative neon packaging illustration, painted as scalable vector shapes.
+class PackagingArt extends StatelessWidget {
+ const PackagingArt({super.key});
+ @override Widget build(BuildContext context)=>SizedBox(height:190,child:CustomPaint(size:const Size(double.infinity,190),painter:_PackagingPainter()));
+}
+class _PackagingPainter extends CustomPainter {
+ @override void paint(Canvas canvas,Size size){
+  final c=canvas; c.save();c.translate(size.width/2-90,8);
+  final glow=Paint()..color=const Color(0x4438BDF8)..maskFilter=const MaskFilter.blur(BlurStyle.normal,22);
+  c.drawOval(const Rect.fromLTWH(12,64,180,100),glow);
+  final left=Path()..moveTo(10,65)..lineTo(90,90)..lineTo(90,169)..lineTo(10,138)..close();
+  final right=Path()..moveTo(90,90)..lineTo(174,61)..lineTo(174,140)..lineTo(90,169)..close();
+  c.drawPath(left,Paint()..shader=const LinearGradient(colors:[Color(0xff05465B),Color(0xff0D7694)]).createShader(const Rect.fromLTWH(10,65,80,105)));
+  c.drawPath(right,Paint()..shader=const LinearGradient(colors:[Color(0xff22246B),Color(0xff672CB1)]).createShader(const Rect.fromLTWH(90,61,85,110)));
+  final stroke=Paint()..color=const Color(0xff25D8E8)..strokeWidth=2..style=PaintingStyle.stroke;
+  c.drawPath(left,stroke);c.drawPath(right,stroke);
+  for(var i=0;i<12;i++){final x=45.0+(i%4)*21,y=57.0+(i~/4)*10;c.drawCircle(Offset(x,y),7,Paint()..color=const Color(0xff29B8C8)..style=PaintingStyle.stroke..strokeWidth=2);}
+  final flapL=Path()..moveTo(10,65)..lineTo(90,90)..lineTo(65,48)..lineTo(-12,28)..close();
+  final flapR=Path()..moveTo(90,90)..lineTo(174,61)..lineTo(198,29)..lineTo(112,49)..close();
+  c.drawPath(flapL,Paint()..color=const Color(0xff0B516C));c.drawPath(flapL,stroke);
+  c.drawPath(flapR,Paint()..color=const Color(0xff292777));c.drawPath(flapR,Paint()..color=const Color(0xff9B64FF)..style=PaintingStyle.stroke..strokeWidth=2);
+  c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(99,35,36,43),const Radius.circular(8)),Paint()..color=const Color(0xff0A293D));
+  for(var i=0;i<5;i++){c.drawArc(Rect.fromLTWH(102+i*3,36,25,39),-1.7,3.2,false,Paint()..color=const Color(0xff22D3EE)..style=PaintingStyle.stroke..strokeWidth=1.5);}
+  c.restore();
+ }
+ @override bool shouldRepaint(covariant CustomPainter oldDelegate)=>false;
+}
 class Filament {Filament(this.name,this.price); String name; double price;}
 class CostApp extends StatefulWidget {const CostApp({super.key}); @override State<CostApp> createState()=>_CostState();}
 class _CostState extends State<CostApp>{
@@ -113,7 +141,7 @@ class _CostState extends State<CostApp>{
  Widget extraPage()=>ListView(padding:const EdgeInsets.fromLTRB(14,12,14,24),children:[
   SegmentedButton<int>(segments:[ButtonSegment(value:0,label:Text(tr('Imballaggio','Packaging')),icon:const Icon(Icons.inventory_2_outlined)),ButtonSegment(value:1,label:Text(tr('Post-produzione','Post-processing')),icon:const Icon(Icons.brush_outlined))],selected:{extraTab},onSelectionChanged:(v)=>setState(()=>extraTab=v.first)),
   const SizedBox(height:16),extrasSection(extraTab==0?tr('Voci di imballaggio','Packaging items'):tr('Voci post-produzione','Post-processing items'),extraTab==0?packaging:postProcessing,extraTab==0?Icons.inventory_2_outlined:Icons.brush_outlined),
-  const SizedBox(height:12),Text(tr('Le voci vengono salvate sul dispositivo. Puoi attivarle o disattivarle per il calcolo.','Items are saved on your device. Toggle them to include or exclude from calculations.'),textAlign:TextAlign.center,style:const TextStyle(color:Colors.white60))
+  const PackagingArt(),const SizedBox(height:12),Text(tr('Le voci vengono salvate sul dispositivo. Puoi attivarle o disattivarle per il calcolo.','Items are saved on your device. Toggle them to include or exclude from calculations.'),textAlign:TextAlign.center,style:const TextStyle(color:Colors.white60))
  ]);
  Widget calculator()=>ListView(padding:const EdgeInsets.fromLTRB(14,10,14,26),children:[
  card(tr('Dati della stampa','Print details'),Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
