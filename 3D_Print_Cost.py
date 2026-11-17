@@ -424,11 +424,49 @@ class App(tk.Tk):
         self.option_add("*TCombobox*Listbox.selectBackground", "#263449")
         self.option_add("*TCombobox*Listbox.selectForeground", TEXT)
 
+    def draw_header_illustrations(self, parent):
+        """Draw filament spool and FDM printer as crisp vector artwork (no external assets)."""
+        canvas = tk.Canvas(parent, width=342, height=110, bg="#0B1120",
+                           highlightthickness=0, bd=0)
+        canvas.pack(side="right", anchor="ne", padx=(12, 0))
+        # Spool: horizontal cylindrical body, wound filament and elliptical flange.
+        canvas.create_polygon(48, 30, 115, 37, 115, 85, 48, 78,
+                              fill="#123F5A", outline="#38BDF8", width=2)
+        for y in range(40, 77, 5):
+            canvas.create_line(55, y, 109, y+4, fill="#2DD4BF", width=1)
+        canvas.create_oval(22, 25, 66, 86, fill="#163C62",
+                           outline="#5EEAD4", width=3)
+        canvas.create_oval(32, 37, 56, 73, fill="#0B1120",
+                           outline="#38BDF8", width=2)
+        canvas.create_oval(39, 49, 49, 61, fill="#5EEAD4", outline="")
+        canvas.create_line(44, 28, 44, 44, fill="#38BDF8", width=3)
+        canvas.create_line(27, 70, 36, 63, fill="#38BDF8", width=3)
+        canvas.create_line(60, 69, 52, 62, fill="#38BDF8", width=3)
+        canvas.create_line(115, 82, 132, 87, 141, 83, 147, 91,
+                           smooth=True, fill="#5EEAD4", width=2)
+        # Printer: frame, gantry, toolhead, build plate and printed part.
+        canvas.create_rectangle(188, 17, 319, 97, outline="#38BDF8", width=3)
+        canvas.create_line(199, 29, 309, 29, fill="#5EEAD4", width=3)
+        canvas.create_line(205, 29, 205, 82, fill="#355A7A", width=3)
+        canvas.create_line(302, 29, 302, 82, fill="#355A7A", width=3)
+        canvas.create_rectangle(240, 26, 270, 47, fill="#225078",
+                                outline="#5EEAD4", width=2)
+        canvas.create_polygon(248, 47, 262, 47, 256, 58,
+                              fill="#38BDF8", outline="")
+        canvas.create_line(204, 85, 304, 85, fill="#5EEAD4", width=4)
+        canvas.create_polygon(238, 83, 238, 69, 249, 61, 272, 69, 272, 83,
+                              fill="#244A80", outline="#38BDF8", width=2)
+        canvas.create_line(249, 61, 249, 83, fill="#5EEAD4", width=1)
+        canvas.create_line(272, 69, 249, 75, 238, 69, fill="#5EEAD4", width=1)
+        canvas.create_line(215, 99, 292, 99, fill="#2DD4BF", width=3)
+        return canvas
+
     def build_ui(self):
         T = self.T
         outer = ttk.Frame(self, padding=(54, 38), style="App.TFrame"); outer.pack(fill="both", expand=True)
         header = ttk.Frame(outer, style="App.TFrame"); header.pack(fill="x", pady=(0, 30))
-        ttk.Label(header, text="◈  3D PRINT COST  v1.1", style="Title.TLabel").pack(anchor="w")
+        self.draw_header_illustrations(header)
+        ttk.Label(header, text="3D PRINT COST  v1.1", style="Title.TLabel").pack(anchor="w", pady=(12, 0))
         ttk.Label(header, text=T["subtitle"], style="Subtitle.TLabel").pack(anchor="w", pady=(4, 0))
         accent_bar = tk.Frame(header, bg="#2DD4BF", height=3, bd=0, highlightthickness=0)
         accent_bar.pack(fill="x", pady=(18, 0))
