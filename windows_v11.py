@@ -136,8 +136,8 @@ class CostsWindow(tk.Toplevel):
         self.minsize(850,610)
         self.configure(bg="#0B1120")
         try:
-            self.iconbitmap(parent.iconbitmap())
-        except (tk.TclError, TypeError):
+            self.iconbitmap(parent.app_icon_path)
+        except (tk.TclError, AttributeError):
             pass
         self.transient(parent)
         self.protocol("WM_DELETE_WINDOW",self.close)
