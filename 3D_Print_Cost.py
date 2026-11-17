@@ -428,7 +428,7 @@ class App(tk.Tk):
         """Display the polished PNG artwork rather than schematic Tkinter drawings."""
         import sys
         base = Path(getattr(sys, "_MEIPASS", Path(__file__).parent))
-        artwork = base / "assets" / "header_art.png"
+        artwork = base / "header_art.png"
         if not artwork.is_file():
             return None
         try:
