@@ -7,7 +7,7 @@ on:
     paths:
       - '3D_Print_Cost.py'
       - 'windows_v11.py'
-      - 'assets/header_art.png'
+      - 'header_art.png'
       - '.github/workflows/windows-build.yml'
   workflow_dispatch:
 
@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: python -m pip install --upgrade pyinstaller openpyxl
+        run: python -m pip install --upgrade pyinstaller openpyxl pillow
       - name: Verify Python syntax and cost formulas
         shell: pwsh
         run: |
@@ -29,9 +29,9 @@ jobs:
       - name: Confirm header artwork exists
         shell: pwsh
         run: |
-          if (-not (Test-Path "assets/header_art.png")) { throw "Missing assets/header_art.png: upload the artwork to the development branch before building." }
+          if (-not (Test-Path "header_art.png")) { throw "Missing header_art.png: upload the artwork to the development branch before building." }
       - name: Build standalone Windows EXE
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name 3D_Print_Cost --icon 3D_Print_Cost.ico --add-data "3D_Print_Cost.ico;." --add-data "assets/header_art.png;assets" 3D_Print_Cost.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name 3D_Print_Cost --icon 3D_Print_Cost.ico --add-data "3D_Print_Cost.ico;." --add-data "header_art.png;." 3D_Print_Cost.py
       - uses: actions/upload-artifact@v4
         with:
           name: 3D-Print-Cost-v1.1-Windows-preview
