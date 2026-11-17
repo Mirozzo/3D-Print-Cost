@@ -7,6 +7,7 @@ on:
     paths:
       - '3D_Print_Cost.py'
       - 'windows_v11.py'
+      - 'assets/header_art.png'
       - '.github/workflows/windows-build.yml'
   workflow_dispatch:
 
@@ -25,8 +26,12 @@ jobs:
         run: |
           python -m py_compile 3D_Print_Cost.py windows_v11.py
           python -c "import sqlite3; from windows_v11 import install_schema, cost_snapshot; from pathlib import Path; import tempfile; class_db=type('DB',(),{}); d=class_db(); d.conn=sqlite3.connect(':memory:'); d.conn.execute('CREATE TABLE settings (key TEXT PRIMARY KEY,value TEXT NOT NULL)'); d.get_setting=lambda k: (lambda row: row[0] if row else None)(d.conn.execute('SELECT value FROM settings WHERE key=?',(k,)).fetchone()); d.set_setting=lambda k,v: (d.conn.execute('INSERT OR REPLACE INTO settings VALUES (?,?)',(k,str(v))),d.conn.commit()); install_schema(d); d.conn.execute('INSERT INTO additional_costs(category,name,amount,enabled) VALUES (?,?,?,?)',('packaging','Box',1.4,1)); d.conn.commit(); x=cost_snapshot(d,{'total':3.75,'material_cost':3.5,'energy_cost':0.25}); assert abs(x['total']-5.15)<1e-8 and abs(x['price']-6.695)<1e-8; print('Cost test passed')"
+      - name: Confirm header artwork exists
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "assets/header_art.png")) { throw "Missing assets/header_art.png: upload the artwork to the development branch before building." }
       - name: Build standalone Windows EXE
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name 3D_Print_Cost --icon 3D_Print_Cost.ico --add-data "3D_Print_Cost.ico;." 3D_Print_Cost.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name 3D_Print_Cost --icon 3D_Print_Cost.ico --add-data "3D_Print_Cost.ico;." --add-data "assets/header_art.png;assets" 3D_Print_Cost.py
       - uses: actions/upload-artifact@v4
         with:
           name: 3D-Print-Cost-v1.1-Windows-preview
