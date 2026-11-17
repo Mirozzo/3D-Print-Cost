@@ -17,45 +17,39 @@ class SpoolArt extends StatelessWidget {
 }
 class _SpoolPainter extends CustomPainter {
  @override void paint(Canvas c,Size size){
-  c.save();c.scale(size.width/120,size.height/120);
-  final halo=Paint()..color=const Color(0x8834D8D1)..maskFilter=const MaskFilter.blur(BlurStyle.normal,19);
-  c.drawOval(const Rect.fromLTWH(22,12,88,99),halo);
-  final purple=Paint()..color=const Color(0x777F4FFF)..maskFilter=const MaskFilter.blur(BlurStyle.normal,12);
-  c.drawOval(const Rect.fromLTWH(58,7,50,104),purple);
-  // Filament trail flowing out of the spool.
-  final trail=Path()..moveTo(29,88)..cubicTo(6,83,7,109,0,114);
-  c.drawPath(trail,Paint()..color=const Color(0xff24EBD7)..style=PaintingStyle.stroke..strokeWidth=2.5..strokeCap=StrokeCap.round);
-  c.drawPath(trail,Paint()..color=const Color(0x8824EBD7)..style=PaintingStyle.stroke..strokeWidth=7..maskFilter=const MaskFilter.blur(BlurStyle.normal,5));
-  // Rear elliptical flange, with a luminous purple edge.
-  final back=Rect.fromLTWH(53,10,58,98);
-  c.drawOval(back,Paint()..shader=const LinearGradient(begin:Alignment.topLeft,end:Alignment.bottomRight,colors:[Color(0xff8A5AFF),Color(0xff21335B),Color(0xff0C1831)]).createShader(back));
-  c.drawOval(back,Paint()..color=const Color(0xffAF74FF)..style=PaintingStyle.stroke..strokeWidth=2.5);
-  // Wound filament: curved cylindrical body, visible at a 3/4 angle.
-  final body=Path()..moveTo(36,20)..cubicTo(54,12,78,23,83,45)..lineTo(83,78)..cubicTo(75,100,55,105,34,94)..cubicTo(20,79,20,39,36,20)..close();
-  c.drawPath(body,Paint()..shader=const LinearGradient(colors:[Color(0xff035D75),Color(0xff17E7D2),Color(0xff06A5C7),Color(0xff062E55)],stops:[0,0.34,0.66,1]).createShader(const Rect.fromLTWH(23,15,65,90)));
-  c.save();c.clipPath(body);
-  for(var i=0;i<25;i++){
-   final x=23.0+i*2.6;
-   c.drawArc(Rect.fromLTWH(x,19,33,76),-1.62,3.35,false,Paint()..color=i.isEven?const Color(0xff6CFFF0):const Color(0xff058DAB)..style=PaintingStyle.stroke..strokeWidth=1.45);
-  }
-  c.restore();
-  // Front flange, shaded as a thick three-dimensional circular rim.
-  final rim=Rect.fromLTWH(50,14,52,94);
-  c.drawOval(rim,Paint()..shader=const LinearGradient(begin:Alignment.topLeft,end:Alignment.bottomRight,colors:[Color(0xff708DA1),Color(0xff233C56),Color(0xff09172B),Color(0xff4C6B86)]).createShader(rim));
-  c.drawOval(rim,Paint()..color=const Color(0xffA5D6E7)..style=PaintingStyle.stroke..strokeWidth=2.4);
-  c.drawOval(const Rect.fromLTWH(57,21,38,80),Paint()..color=const Color(0xff10283D));
-  c.drawOval(const Rect.fromLTWH(57,21,38,80),Paint()..color=const Color(0xff35546A)..style=PaintingStyle.stroke..strokeWidth=1.5);
-  // Radial spokes with highlights.
-  for(var i=0;i<6;i++){
-   c.save();c.translate(76,61);c.rotate(i*1.04719755);
-   c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(-3.2,-35,6.4,27),const Radius.circular(2)),Paint()..color=const Color(0xff4D7189));
-   c.drawLine(const Offset(-2,-32),const Offset(-2,-12),Paint()..color=const Color(0xff94B9C6)..strokeWidth=1);
-   c.restore();
-  }
-  c.drawOval(const Rect.fromLTWH(65,47,22,28),Paint()..color=const Color(0xff061526));
-  c.drawOval(const Rect.fromLTWH(70,52,12,18),Paint()..color=const Color(0xff62889B));
-  c.drawOval(const Rect.fromLTWH(73,55,6,12),Paint()..color=const Color(0xff0B1A2C));
-  c.restore();
+ c.save();c.scale(size.width/120,size.height/120);
+ final glow=Paint()..color=const Color(0x6637F5D9)..maskFilter=const MaskFilter.blur(BlurStyle.normal,16);
+ c.drawOval(const Rect.fromLTWH(13,20,94,82),glow);
+ c.drawOval(const Rect.fromLTWH(23,16,80,90),Paint()..color=const Color(0x667E4DFF)..maskFilter=const MaskFilter.blur(BlurStyle.normal,15));
+ // Side-on spool: two solid flanges around a broad cylinder of wound filament.
+ final rear=Rect.fromLTWH(73,24,27,69);
+ c.drawOval(rear,Paint()..color=const Color(0xff3C4C76));
+ c.drawOval(rear,Paint()..color=const Color(0xffB07BFF)..strokeWidth=2..style=PaintingStyle.stroke);
+ final body=Path()..moveTo(35,30)..lineTo(85,30)..cubicTo(99,39,99,79,85,88)..lineTo(35,88)..cubicTo(21,78,21,40,35,30)..close();
+ c.drawPath(body,Paint()..shader=const LinearGradient(begin:Alignment.topLeft,end:Alignment.bottomRight,colors:[Color(0xff004D68),Color(0xff04B6B5),Color(0xff4AF9E3),Color(0xff047AA4),Color(0xff06345B)]).createShader(const Rect.fromLTWH(23,30,76,60)));
+ c.save();c.clipPath(body);
+ for(var i=0;i<22;i++){
+ final y=32.0+i*2.55;
+ c.drawLine(Offset(29,y),Offset(91,y+0.8),Paint()..color=i.isEven?const Color(0xff77FFF0):const Color(0xff008FAD)..strokeWidth=1.1);
+ }
+ c.restore();
+ // Left outer flange is elliptical, with a recessed ring and only three broad support webs.
+ final front=Rect.fromLTWH(13,21,37,77);
+ c.drawOval(front,Paint()..shader=const LinearGradient(colors:[Color(0xff9FBDD2),Color(0xff213A57),Color(0xff09182B)]).createShader(front));
+ c.drawOval(front,Paint()..color=const Color(0xffB1DBEC)..strokeWidth=2.5..style=PaintingStyle.stroke);
+ c.drawOval(const Rect.fromLTWH(19,28,25,63),Paint()..color=const Color(0xff0C283B));
+ for(var i=0;i<3;i++){
+ c.save();c.translate(31.5,59.5);c.scale(0.54,1);c.rotate(i*2.094395);
+ c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(-4,-28,8,23),const Radius.circular(2)),Paint()..color=const Color(0xff6C91A6));
+ c.restore();
+ }
+ c.drawOval(const Rect.fromLTWH(25,50,13,19),Paint()..color=const Color(0xff7CA7B8));
+ c.drawOval(const Rect.fromLTWH(29,54,5,11),Paint()..color=const Color(0xff071728));
+ // Loose filament emerges tangentially from the bottom of the wound cylinder.
+ final thread=Path()..moveTo(79,87)..cubicTo(91,105,103,100,110,115);
+ c.drawPath(thread,Paint()..color=const Color(0x9932F8DF)..style=PaintingStyle.stroke..strokeWidth=6..maskFilter=const MaskFilter.blur(BlurStyle.normal,5));
+ c.drawPath(thread,Paint()..color=const Color(0xff46F5E4)..style=PaintingStyle.stroke..strokeWidth=2.5..strokeCap=StrokeCap.round);
+ c.restore();
  }
  @override bool shouldRepaint(covariant CustomPainter oldDelegate)=>false;
 }
@@ -149,7 +143,7 @@ class _CostState extends State<CostApp>{
  Future<void> save()async{final p=await SharedPreferences.getInstance();await p.setString('filaments',jsonEncode(filaments.map((f)=>{'name':f.name,'price':f.price}).toList()));await p.setString('energy',energy.text);await p.setString('power',power.text);await p.setBool('english',english);await p.setString('packaging_v11',jsonEncode(packaging.map((x)=>x.toJson()).toList()));await p.setString('post_v11',jsonEncode(postProcessing.map((x)=>x.toJson()).toList()));await p.setString('markup_v11',markup.text);await p.setBool('include_v11',includeExtras);await p.setBool('margin_v11',useMargin);}
  void msg(String s)=>ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(s)));
  Widget field(String title,TextEditingController c)=>TextField(controller:c,keyboardType:const TextInputType.numberWithOptions(decimal:true),decoration:InputDecoration(labelText:title,filled:true,fillColor:const Color(0xff202F46),border:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:const BorderSide(color:Color(0xff54708A))),enabledBorder:OutlineInputBorder(borderRadius:BorderRadius.circular(14),borderSide:const BorderSide(color:Color(0xff53677F)))));
- Widget card(String title,Widget child,{IconData icon=Icons.layers_outlined})=>Container(margin:const EdgeInsets.only(bottom:16),padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(begin:Alignment.topLeft,end:Alignment.bottomRight,colors:[Color(0xff172E45),Color(0xff151C36)]),borderRadius:BorderRadius.circular(24),border:Border.all(color:const Color(0xff29576B),width:1.2),boxShadow:const [BoxShadow(color:Color(0x44000000),blurRadius:16,offset:Offset(0,8))]),child:Stack(children:[if(icon==Icons.print_outlined)Positioned(right:0,top:0,child:Opacity(opacity:0.94,child:const PrinterArt(width:150))),Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(children:[Icon(icon,color:teal,size:25),const SizedBox(width:10),Expanded(child:Text(title,style:const TextStyle(fontSize:19,fontWeight:FontWeight.w800)))]),const SizedBox(height:18),child])]));
+ Widget card(String title,Widget child,{IconData icon=Icons.layers_outlined})=>Container(margin:const EdgeInsets.only(bottom:16),padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(begin:Alignment.topLeft,end:Alignment.bottomRight,colors:[Color(0xff172E45),Color(0xff151C36)]),borderRadius:BorderRadius.circular(24),border:Border.all(color:const Color(0xff29576B),width:1.2),boxShadow:const [BoxShadow(color:Color(0x44000000),blurRadius:16,offset:Offset(0,8))]),child:Stack(children:[Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(children:[Icon(icon,color:teal,size:25),const SizedBox(width:10),Expanded(child:Text(title,style:const TextStyle(fontSize:19,fontWeight:FontWeight.w800)))]),const SizedBox(height:18),child])]));
  Widget btn(String title,VoidCallback fn,{IconData icon=Icons.calculate_outlined})=>SizedBox(width:double.infinity,child:Container(decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xff16D6BD),Color(0xff3187D4),Color(0xff9645E8)]),borderRadius:BorderRadius.circular(28)),child:FilledButton.icon(style:FilledButton.styleFrom(backgroundColor:Colors.transparent,shadowColor:Colors.transparent,foregroundColor:Colors.white,padding:const EdgeInsets.symmetric(vertical:16)),onPressed:fn,icon:Icon(icon),label:Text(title,style:const TextStyle(fontWeight:FontWeight.bold)))));
  Widget metric(String label,String value,IconData icon)=>Expanded(child:Column(children:[Icon(icon,color:teal,size:23),const SizedBox(height:7),Text(label,textAlign:TextAlign.center,style:const TextStyle(fontSize:11,color:Color(0xffC5D3E4))),const SizedBox(height:5),FittedBox(fit:BoxFit.scaleDown,child:Text(value,style:const TextStyle(fontWeight:FontWeight.bold,fontSize:16)))]));
  void calculate(){final g=parse(grams.text),h=parse(hours.text),m=parse(minutes.text),e=parse(energy.text),w=parse(power.text);if(selected==null||[g,h,m,e,w].any((x)=>x==null||!x!.isFinite||x<0)||m!>=60){msg(tr('Controlla i dati e seleziona un filamento.','Check inputs and select a filament.'));return;}final f=filaments.firstWhere((x)=>x.name==selected);setState((){material=g!/1000*f.price;kwh=w!/1000*(h!+m!/60);electric=kwh!*e!;total=material!+electric!;});}
@@ -196,35 +190,48 @@ class _CostState extends State<CostApp>{
  ]);
  Widget accordion(int index,String title,String subtitle,IconData icon,Widget child){
  final open=expandedSections.contains(index);
- return Container(margin:const EdgeInsets.only(bottom:9),decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xff162E48),Color(0xff151D36)]),borderRadius:BorderRadius.circular(17),border:Border.all(color:open?teal:const Color(0xff2B6C83),width:1.2)),child:Column(children:[
- InkWell(borderRadius:BorderRadius.circular(17),onTap:()=>setState((){if(open){expandedSections.remove(index);}else{expandedSections.add(index);}}),child:Padding(padding:const EdgeInsets.symmetric(horizontal:13,vertical:12),child:Row(children:[Icon(icon,color:teal,size:26),const SizedBox(width:12),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(title,style:const TextStyle(fontSize:17,fontWeight:FontWeight.w800)),const SizedBox(height:2),Text(subtitle,style:const TextStyle(fontSize:12,color:Color(0xffC4D3E6)))])),Icon(open?Icons.keyboard_arrow_up_rounded:Icons.keyboard_arrow_down_rounded,color:Colors.white70,size:27)]))),
- if(open)Padding(padding:const EdgeInsets.fromLTRB(14,0,14,14),child:Column(children:[const Divider(color:Color(0xff31566D)),child]))
+ return Container(margin:const EdgeInsets.only(bottom:8),decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xff1A3555),Color(0xff142143)]),borderRadius:BorderRadius.circular(13),border:Border.all(color:open?const Color(0xff43D9E6):const Color(0xff35769E),width:1.1)),child:Column(children:[
+ InkWell(borderRadius:BorderRadius.circular(13),onTap:()=>setState((){if(open){expandedSections.remove(index);}else{expandedSections.add(index);}}),child:Padding(padding:const EdgeInsets.symmetric(horizontal:12,vertical:9),child:Row(children:[
+ Icon(icon,color:teal,size:23),const SizedBox(width:10),
+ Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(title,style:const TextStyle(fontSize:15,fontWeight:FontWeight.w800)),const SizedBox(height:3),Text(subtitle,style:const TextStyle(fontSize:11,color:Color(0xffD4E4F5)),maxLines:2,overflow:TextOverflow.ellipsis)])),
+ Icon(open?Icons.keyboard_arrow_up_rounded:Icons.keyboard_arrow_down_rounded,color:Colors.white70,size:25)
+ ]))),
+ if(open)Padding(padding:const EdgeInsets.fromLTRB(12,0,12,12),child:Column(children:[const Divider(color:Color(0xff31566D)),child]))
  ]));
  }
- Widget calculator()=>ListView(padding:const EdgeInsets.fromLTRB(14,10,14,26),children:[
+ Widget compactSummaryLine(String label,double? value,{bool highlight=false})=>Padding(padding:const EdgeInsets.symmetric(vertical:3),child:Row(children:[Expanded(child:Text(label,style:TextStyle(fontSize:12,color:highlight?Colors.white:const Color(0xffDAE5F4),fontWeight:highlight?FontWeight.w800:FontWeight.normal))),Text(value==null?'—':euro(value),style:TextStyle(fontSize:13,color:highlight?teal:Colors.white,fontWeight:FontWeight.w800))]));
+Widget calculator()=>ListView(padding:const EdgeInsets.fromLTRB(14,10,14,26),children:[
  card(tr('Dati della stampa','Print details'),Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
- const SizedBox(height:118),
- Text(tr('Filamento','Filament'),style:const TextStyle(fontWeight:FontWeight.w700,fontSize:14)),
- const SizedBox(height:5),
- DropdownButtonFormField<String>(value:selected,decoration:InputDecoration(prefixIcon:const Icon(Icons.cable_outlined,color:teal),contentPadding:const EdgeInsets.symmetric(vertical:13,horizontal:12),border:OutlineInputBorder(borderRadius:BorderRadius.circular(12))),items:filaments.map((f)=>DropdownMenuItem(value:f.name,child:Text(f.name))).toList(),onChanged:(v)=>setState(()=>selected=v)),
- const SizedBox(height:12),field(tr('Filamento totale (g)','Total filament (g)'),grams),const SizedBox(height:12),
- Row(children:[Expanded(child:field(tr('Ore','Hours'),hours)),const SizedBox(width:12),Expanded(child:field(tr('Minuti','Minutes'),minutes))]),
- const SizedBox(height:16),btn(tr('CALCOLA COSTO','CALCULATE COST'),calculate)]),icon:Icons.print_outlined),
- accordion(0,tr('Costi di produzione','Production costs'),total==null?tr('Filamento + energia','Filament + energy'):euro(total!),Icons.precision_manufacturing_outlined,Column(children:[detailLine(tr('Filamento','Filament'),material),detailLine(tr('Energia elettrica','Electricity'),electric),const Divider(),detailLine(tr('Totale produzione','Production total'),total,prominent:true) ])),
- accordion(1,tr('Spese di imballaggio','Packaging costs'),euro(packingTotal),Icons.inventory_2_outlined,Column(children:[detailLine(tr('Voci attive','Enabled items'),packingTotal),TextButton.icon(onPressed:()=>setState((){tab=2;extraTab=0;}),icon:const Icon(Icons.edit_outlined),label:Text(tr('Gestisci imballaggio','Manage packaging'))) ])),
- accordion(2,tr('Post-produzione','Post-processing'),euro(postTotal),Icons.brush_outlined,Column(children:[detailLine(tr('Voci attive','Enabled items'),postTotal),TextButton.icon(onPressed:()=>setState((){tab=2;extraTab=1;}),icon:const Icon(Icons.edit_outlined),label:Text(tr('Gestisci post-produzione','Manage post-processing'))) ])),
+ LayoutBuilder(builder:(context,box){final compact=box.maxWidth<330;return Row(crossAxisAlignment:CrossAxisAlignment.start,children:[
+ Expanded(flex:compact?6:5,child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+ Text(tr('Filamento','Filament'),style:const TextStyle(fontSize:12,fontWeight:FontWeight.w700)),const SizedBox(height:5),
+ DropdownButtonFormField<String>(value:selected,isExpanded:true,decoration:InputDecoration(prefixIcon:const Icon(Icons.layers_outlined,color:teal,size:20),isDense:true,filled:true,fillColor:const Color(0xff142944),contentPadding:const EdgeInsets.symmetric(vertical:9,horizontal:5),border:OutlineInputBorder(borderRadius:BorderRadius.circular(10))),items:filaments.map((f)=>DropdownMenuItem(value:f.name,child:Text(f.name,overflow:TextOverflow.ellipsis,style:const TextStyle(fontSize:12)))).toList(),onChanged:(v)=>setState(()=>selected=v)),
+ const SizedBox(height:8),field(tr('Filamento totale (g)','Total filament (g)'),grams),const SizedBox(height:8),
+ Row(children:[Expanded(child:field(tr('Ore','Hours'),hours)),const SizedBox(width:6),Expanded(child:field(tr('Minuti','Minutes'),minutes))])
+ ])),
+ const SizedBox(width:5),Expanded(flex:compact?4:5,child:Padding(padding:const EdgeInsets.only(top:4),child:const PrinterArt(width:170)))
+ ]);}),
+ const SizedBox(height:12),btn(tr('CALCOLA COSTO','CALCULATE COST'),calculate)
+ ]),icon:Icons.print_outlined),
+ accordion(0,tr('Costi di produzione','Production costs'),'${tr('Filamento','Filament')}: ${euro(material??0)}   |   ${tr('Energia','Energy')}: ${euro(electric??0)}',Icons.precision_manufacturing_outlined,Column(children:[detailLine(tr('Filamento','Filament'),material),detailLine(tr('Energia elettrica','Electricity'),electric),const Divider(),detailLine(tr('Totale produzione','Production total'),total,prominent:true) ])),
+ accordion(1,tr('Spese di imballaggio','Packaging costs'),'${packaging.where((x)=>x.enabled).length} ${tr('voci','items')}  |  ${tr('Totale','Total')}: ${euro(packingTotal)}',Icons.inventory_2_outlined,Column(children:[detailLine(tr('Voci attive','Enabled items'),packingTotal),TextButton.icon(onPressed:()=>setState((){tab=2;extraTab=0;}),icon:const Icon(Icons.edit_outlined),label:Text(tr('Gestisci imballaggio','Manage packaging'))) ])),
+ accordion(2,tr('Post-produzione','Post-processing'),'${postProcessing.where((x)=>x.enabled).length} ${tr('voci','items')}  |  ${tr('Totale','Total')}: ${euro(postTotal)}',Icons.brush_outlined,Column(children:[detailLine(tr('Voci attive','Enabled items'),postTotal),TextButton.icon(onPressed:()=>setState((){tab=2;extraTab=1;}),icon:const Icon(Icons.edit_outlined),label:Text(tr('Gestisci post-produzione','Manage post-processing'))) ])),
  accordion(3,tr('Prezzo di vendita','Selling price'),tr('Ricarico o margine','Markup or margin'),Icons.sell_outlined,Column(children:[
  SwitchListTile(contentPadding:EdgeInsets.zero,title:Text(tr('Includi imballaggio e post-produzione','Include packaging and post-processing')),value:includeExtras,onChanged:(v){setState(()=>includeExtras=v);save();}),
  SegmentedButton<bool>(segments:[ButtonSegment(value:false,label:Text(tr('Ricarico','Markup'))),ButtonSegment(value:true,label:Text(tr('Margine','Margin')))],selected:{useMargin},onSelectionChanged:(v){setState(()=>useMargin=v.first);save();}),
  const SizedBox(height:12),TextField(controller:markup,keyboardType:const TextInputType.numberWithOptions(decimal:true),decoration:InputDecoration(labelText:tr('Percentuale (%)','Percentage (%)'),suffixText:'%',border:const OutlineInputBorder()),onChanged:(_){setState((){});save();}),
  const SizedBox(height:10),Text(tr('Ricarico: percentuale sul costo. Margine: percentuale sul prezzo finale.','Markup: percentage of cost. Margin: percentage of final selling price.'),style:const TextStyle(color:Colors.white60,fontSize:12)),
   ])),
- accordion(4,tr('Riepilogo completo','Full summary'),completeCost==null?'—':euro(completeCost!),Icons.auto_graph_outlined,Column(children:[
- detailLine(tr('Produzione','Production'),total),detailLine(tr('Imballaggio','Packaging'),packingTotal),detailLine(tr('Post-produzione','Post-processing'),postTotal),
- const Divider(),detailLine(tr('Costo complessivo','Total cost'),completeCost,prominent:true),
- detailLine(tr('Guadagno stimato','Estimated profit'),salePrice==null||completeCost==null?null:salePrice!-completeCost!),
- const SizedBox(height:8),Container(width:double.infinity,padding:const EdgeInsets.all(14),decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xff007F80),Color(0xff5936BB)]),borderRadius:BorderRadius.circular(15)),child:Column(children:[Text(tr('PREZZO DI VENDITA CONSIGLIATO','SUGGESTED SELLING PRICE'),style:const TextStyle(fontWeight:FontWeight.bold,fontSize:12)),const SizedBox(height:5),Text(salePrice==null?'—':euro(salePrice!),style:const TextStyle(fontSize:30,fontWeight:FontWeight.w900))])),
-  ])),
+ accordion(4,tr('Riepilogo completo','Full summary'),tr('Produzione + imballaggio + post-produzione','Production + packaging + post-processing'),Icons.bar_chart_rounded,Column(children:[
+ compactSummaryLine(tr('Costo di produzione','Production cost'),total),
+ compactSummaryLine(tr('Spese di imballaggio','Packaging costs'),packingTotal),
+ compactSummaryLine(tr('Post-produzione','Post-processing'),postTotal),
+ const SizedBox(height:5),
+ Container(padding:const EdgeInsets.symmetric(vertical:5,horizontal:8),decoration:BoxDecoration(color:const Color(0xff176F81),borderRadius:BorderRadius.circular(8)),child:compactSummaryLine(tr('Costo totale (produzione + spese)','Total cost (production + expenses)'),completeCost,highlight:true)),
+ const SizedBox(height:5),compactSummaryLine(tr('Guadagno stimato','Estimated profit'),salePrice==null||completeCost==null?null:salePrice!-completeCost!),
+ const SizedBox(height:9),
+ Container(width:double.infinity,padding:const EdgeInsets.symmetric(horizontal:12,vertical:10),decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xff04BDB5),Color(0xff3C87D9),Color(0xff8A3DDF)]),borderRadius:BorderRadius.circular(10)),child:Row(children:[const Icon(Icons.sell_outlined,color:Colors.white,size:23),const SizedBox(width:9),Expanded(child:Text(tr('PREZZO DI VENDITA CONSIGLIATO','SUGGESTED SELLING PRICE'),style:const TextStyle(fontSize:11,fontWeight:FontWeight.w800))),FittedBox(child:Text(salePrice==null?'—':euro(salePrice!),style:const TextStyle(fontSize:22,fontWeight:FontWeight.w900)))]))
+ ])),
  Container(decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xff05BFAF),Color(0xff3E8CD4),Color(0xff923DE0)]),borderRadius:BorderRadius.circular(25)),padding:const EdgeInsets.all(2),child:Column(children:[
  InkWell(onTap:()=>setState(()=>excelExpanded=!excelExpanded),child:Padding(padding:const EdgeInsets.symmetric(vertical:14,horizontal:14),child:Row(children:[const Icon(Icons.description_outlined,color:Colors.white),const SizedBox(width:10),Expanded(child:Text(tr('SALVA / ESPORTA EXCEL','SAVE / EXPORT EXCEL'),style:const TextStyle(fontWeight:FontWeight.w800,fontSize:15))),Icon(excelExpanded?Icons.keyboard_arrow_up:Icons.keyboard_arrow_down)]))),
  if(excelExpanded)Container(padding:const EdgeInsets.symmetric(horizontal:12,vertical:4),decoration:BoxDecoration(color:const Color(0xff1B2D46),borderRadius:BorderRadius.circular(22)),child:Column(children:[
