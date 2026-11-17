@@ -409,10 +409,10 @@ class App(tk.Tk):
                   selectbackground=[("readonly", ENTRY)], selectforeground=[("readonly", TEXT)])
         style.configure("Primary.TButton", background=ACCENT, foreground="#07140B",
                         font=(DISPLAY, 12), padding=(16, 13), borderwidth=0)
-        style.map("Primary.TButton", background=[("active", ACCENT_HOVER), ("pressed", ACCENT_HOVER)])
-        style.configure("Secondary.TButton", background="#1D2A3D", foreground=TEXT,
+        style.map("Primary.TButton", background=[("active", ACCENT_HOVER), ("pressed", ACCENT_HOVER)], foreground=[("!disabled", "#07140B")])
+        style.configure("Secondary.TButton", background="#1D2A3D", foreground="#FFFFFF",
                         font=(DISPLAY, 11), padding=(14, 11), borderwidth=0)
-        style.map("Secondary.TButton", background=[("active", "#293A52"), ("pressed", "#293A52")])
+        style.map("Secondary.TButton", background=[("active", "#293A52"), ("pressed", "#293A52")], foreground=[("disabled", "#94A3B8"), ("!disabled", "#FFFFFF")])
         style.configure("Excel.TButton", background=BLUE, foreground="white",
                         font=(DISPLAY, 11), padding=(14, 11), borderwidth=0)
         style.map("Excel.TButton", background=[("active", "#0EA5E9"), ("pressed", "#0EA5E9")])
@@ -475,9 +475,9 @@ class App(tk.Tk):
         ttk.Button(result_card, text="▣  " + T["save_excel"], command=self.save_result_excel, style="Excel.TButton").pack(fill="x", pady=(8,0))
 
         actions = ttk.Frame(outer, padding=(0,22,0,0), style="App.TFrame"); actions.pack(fill="x")
-        ttk.Button(actions, text="◉  " + T["manage_filaments"], command=lambda: FilamentManager(self, self.db, self.refresh, self.lang), style="Secondary.TButton").pack(side="left")
-        ttk.Button(actions, text="⚙  " + T["current_settings"], command=lambda: SettingsWindow(self, self.db, self.refresh, self.lang), style="Secondary.TButton").pack(side="left", padx=10)
-        ttk.Button(actions, text=("▣  Costi aggiuntivi e prezzo di vendita" if self.lang=="it" else "▣  Additional costs and selling price"), command=self.open_costs, style="Primary.TButton").pack(side="left", padx=10)
+        ttk.Button(actions, text=T["manage_filaments"], command=lambda: FilamentManager(self, self.db, self.refresh, self.lang), style="Secondary.TButton").pack(side="left")
+        ttk.Button(actions, text=T["current_settings"], command=lambda: SettingsWindow(self, self.db, self.refresh, self.lang), style="Secondary.TButton").pack(side="left", padx=10)
+        ttk.Button(actions, text=("Costi aggiuntivi e prezzo di vendita" if self.lang=="it" else "Additional costs and selling price"), command=self.open_costs, style="Primary.TButton").pack(side="left", padx=10)
         self.status = tk.StringVar()
         ttk.Label(outer, textvariable=self.status, style="Status.TLabel").pack(anchor="w", pady=(16,0))
 
