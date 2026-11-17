@@ -12,22 +12,49 @@ double? parse(String v)=>double.tryParse(v.trim().replaceAll(',','.'));
 String euro(double n)=>'€ ${n.toStringAsFixed(2).replaceAll('.',',')}';
 // Decorative artwork drawn natively: no network images or external assets.
 class SpoolArt extends StatelessWidget {
- const SpoolArt({super.key,this.size=100}); final double size;
+ const SpoolArt({super.key,this.size=110}); final double size;
  @override Widget build(BuildContext context)=>SizedBox(width:size,height:size,child:CustomPaint(painter:_SpoolPainter()));
 }
 class _SpoolPainter extends CustomPainter {
- @override void paint(Canvas c,Size s){
-  c.save();c.scale(s.width/100,s.height/100);
-  final glow=Paint()..color=const Color(0x442DD4BF)..maskFilter=const MaskFilter.blur(BlurStyle.normal,13);
-  c.drawOval(const Rect.fromLTWH(16,9,70,86),glow);
-  c.drawOval(const Rect.fromLTWH(8,12,72,78),Paint()..color=const Color(0xff102B3C));
-  final filament=Paint()..color=const Color(0xff04D8C5)..style=PaintingStyle.stroke..strokeWidth=2.3;
-  for(var x=19.0;x<55;x+=3.5){c.drawArc(Rect.fromLTWH(x,16,34,68),-1.7,3.45,false,filament);}
-  c.drawOval(const Rect.fromLTWH(43,8,47,84),Paint()..color=const Color(0xff243D4B));
-  c.drawOval(const Rect.fromLTWH(43,8,47,84),Paint()..color=const Color(0xff4E6A78)..style=PaintingStyle.stroke..strokeWidth=3);
-  for(var i=0;i<6;i++){final a=i*1.0472;c.save();c.translate(66.5,50);c.rotate(a);c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(-4,-34,8,26),const Radius.circular(3)),Paint()..color=const Color(0xff0A1B2B));c.restore();}
-  c.drawOval(const Rect.fromLTWH(55,36,23,28),Paint()..color=const Color(0xff0A1B2B));
-  c.drawOval(const Rect.fromLTWH(61,42,11,16),Paint()..color=const Color(0xff506A7A));
+ @override void paint(Canvas c,Size size){
+  c.save();c.scale(size.width/120,size.height/120);
+  final halo=Paint()..color=const Color(0x8834D8D1)..maskFilter=const MaskFilter.blur(BlurStyle.normal,19);
+  c.drawOval(const Rect.fromLTWH(22,12,88,99),halo);
+  final purple=Paint()..color=const Color(0x777F4FFF)..maskFilter=const MaskFilter.blur(BlurStyle.normal,12);
+  c.drawOval(const Rect.fromLTWH(58,7,50,104),purple);
+  // Filament trail flowing out of the spool.
+  final trail=Path()..moveTo(29,88)..cubicTo(6,83,7,109,0,114);
+  c.drawPath(trail,Paint()..color=const Color(0xff24EBD7)..style=PaintingStyle.stroke..strokeWidth=2.5..strokeCap=StrokeCap.round);
+  c.drawPath(trail,Paint()..color=const Color(0x8824EBD7)..style=PaintingStyle.stroke..strokeWidth=7..maskFilter=const MaskFilter.blur(BlurStyle.normal,5));
+  // Rear elliptical flange, with a luminous purple edge.
+  final back=Rect.fromLTWH(53,10,58,98);
+  c.drawOval(back,Paint()..shader=const LinearGradient(begin:Alignment.topLeft,end:Alignment.bottomRight,colors:[Color(0xff8A5AFF),Color(0xff21335B),Color(0xff0C1831)]).createShader(back));
+  c.drawOval(back,Paint()..color=const Color(0xffAF74FF)..style=PaintingStyle.stroke..strokeWidth=2.5);
+  // Wound filament: curved cylindrical body, visible at a 3/4 angle.
+  final body=Path()..moveTo(36,20)..cubicTo(54,12,78,23,83,45)..lineTo(83,78)..cubicTo(75,100,55,105,34,94)..cubicTo(20,79,20,39,36,20)..close();
+  c.drawPath(body,Paint()..shader=const LinearGradient(colors:[Color(0xff035D75),Color(0xff17E7D2),Color(0xff06A5C7),Color(0xff062E55)],stops:[0,0.34,0.66,1]).createShader(const Rect.fromLTWH(23,15,65,90)));
+  c.save();c.clipPath(body);
+  for(var i=0;i<25;i++){
+   final x=23.0+i*2.6;
+   c.drawArc(Rect.fromLTWH(x,19,33,76),-1.62,3.35,false,Paint()..color=i.isEven?const Color(0xff6CFFF0):const Color(0xff058DAB)..style=PaintingStyle.stroke..strokeWidth=1.45);
+  }
+  c.restore();
+  // Front flange, shaded as a thick three-dimensional circular rim.
+  final rim=Rect.fromLTWH(50,14,52,94);
+  c.drawOval(rim,Paint()..shader=const LinearGradient(begin:Alignment.topLeft,end:Alignment.bottomRight,colors:[Color(0xff708DA1),Color(0xff233C56),Color(0xff09172B),Color(0xff4C6B86)]).createShader(rim));
+  c.drawOval(rim,Paint()..color=const Color(0xffA5D6E7)..style=PaintingStyle.stroke..strokeWidth=2.4);
+  c.drawOval(const Rect.fromLTWH(57,21,38,80),Paint()..color=const Color(0xff10283D));
+  c.drawOval(const Rect.fromLTWH(57,21,38,80),Paint()..color=const Color(0xff35546A)..style=PaintingStyle.stroke..strokeWidth=1.5);
+  // Radial spokes with highlights.
+  for(var i=0;i<6;i++){
+   c.save();c.translate(76,61);c.rotate(i*1.04719755);
+   c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(-3.2,-35,6.4,27),const Radius.circular(2)),Paint()..color=const Color(0xff4D7189));
+   c.drawLine(const Offset(-2,-32),const Offset(-2,-12),Paint()..color=const Color(0xff94B9C6)..strokeWidth=1);
+   c.restore();
+  }
+  c.drawOval(const Rect.fromLTWH(65,47,22,28),Paint()..color=const Color(0xff061526));
+  c.drawOval(const Rect.fromLTWH(70,52,12,18),Paint()..color=const Color(0xff62889B));
+  c.drawOval(const Rect.fromLTWH(73,55,6,12),Paint()..color=const Color(0xff0B1A2C));
   c.restore();
  }
  @override bool shouldRepaint(covariant CustomPainter oldDelegate)=>false;
@@ -184,7 +211,7 @@ class _CostState extends State<CostApp>{
  Widget filamentPage()=>ListView(padding:const EdgeInsets.all(16),children:[btn(tr('AGGIUNGI FILAMENTO','ADD FILAMENT'),()=>editFilament()),...filaments.map((f)=>Card(color:panel,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(18)),child:ListTile(leading:const Icon(Icons.view_in_ar,color:teal),title:Text(f.name),subtitle:Text('${euro(f.price)}/kg'),onTap:()=>editFilament(f),trailing:IconButton(icon:const Icon(Icons.delete_outline),onPressed:()async{final yes=await showDialog<bool>(context:context,builder:(c)=>AlertDialog(title:Text(tr('Eliminare filamento?','Delete filament?')),content:Text(f.name),actions:[TextButton(onPressed:()=>Navigator.pop(c,false),child:const Text('No')),TextButton(onPressed:()=>Navigator.pop(c,true),child:const Text('Yes'))]));if(yes==true){setState((){filaments.remove(f);if(selected==f.name)selected=filaments.isEmpty?null:filaments.first.name;total=null;});save();}}))))]); 
  Widget settings()=>ListView(padding:const EdgeInsets.all(16),children:[card(tr('IMPOSTAZIONI','SETTINGS'),Column(children:[field(tr('Costo corrente (€/kWh)','Electricity price (€/kWh)'),energy),const SizedBox(height:14),field(tr('Consumo medio stampante (W)','Average printer power (W)'),power),const SizedBox(height:14),SwitchListTile(title:const Text('English'),value:english,onChanged:(v){setState(()=>english=v);save();}),btn(tr('SALVA IMPOSTAZIONI','SAVE SETTINGS'),(){final e=parse(energy.text),w=parse(power.text);if(e==null||w==null||!e.isFinite||!w.isFinite||e<0||w<0){msg(tr('Valori non validi','Invalid values'));return;}save();setState(()=>total=null);msg(tr('Impostazioni salvate','Settings saved'));})]))]);
  @override Widget build(BuildContext context)=>Theme(data:ThemeData(useMaterial3:true,brightness:Brightness.dark,scaffoldBackgroundColor:bg,colorScheme:ColorScheme.fromSeed(seedColor:teal,brightness:Brightness.dark)),child:Scaffold(
- appBar:AppBar(toolbarHeight:105,backgroundColor:bg,title:Row(children:[const Icon(Icons.print_outlined,color:teal,size:37),const SizedBox(width:12),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('3D Print Cost v1.1',style:TextStyle(fontWeight:FontWeight.w900,fontSize:23)),Text(tr('Calcola il costo delle tue stampe 3D','Calculate your 3D printing costs'),style:const TextStyle(fontSize:12,color:Color(0xffA8BDCD)))])),const SpoolArt(size:66),const SizedBox(width:2),const Icon(Icons.info_outline,color:Color(0xffA8BDCD),size:19)]),bottom:PreferredSize(preferredSize:const Size.fromHeight(3),child:Container(height:3,decoration:const BoxDecoration(gradient:LinearGradient(colors:[teal,blue,Color(0xff9A48EB)]))))),
+ appBar:AppBar(toolbarHeight:120,backgroundColor:bg,titleSpacing:12,title:Stack(clipBehavior:Clip.none,children:[Positioned(right:0,top:-19,child:IgnorePointer(child:Opacity(opacity:0.98,child:const SpoolArt(size:112)))),Padding(padding:const EdgeInsets.only(top:8,bottom:7,right:86),child:Row(crossAxisAlignment:CrossAxisAlignment.start,children:[const Icon(Icons.print_outlined,color:teal,size:29),const SizedBox(width:8),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('3D Print Cost',maxLines:1,style:TextStyle(fontWeight:FontWeight.w900,fontSize:23,letterSpacing:-0.6)),const Text('v1.1',style:TextStyle(fontSize:17,fontWeight:FontWeight.w900,color:Color(0xffB678FF))),const SizedBox(height:3),Text(tr('Calcola costi e prezzo di vendita delle tue stampe 3D','Calculate costs and selling prices for your 3D prints'),maxLines:2,style:const TextStyle(fontSize:11,color:Color(0xffC1D2E5),height:1.2))]))]))]),bottom:PreferredSize(preferredSize:const Size.fromHeight(3),child:Container(height:3,decoration:const BoxDecoration(gradient:LinearGradient(colors:[teal,blue,Color(0xff9A48EB)]))))),
  body:Column(children:[
  Container(height:79,padding:const EdgeInsets.symmetric(horizontal:12,vertical:8),child:Row(children:[
  for(final (i,icon,label) in [(0,Icons.calculate_outlined,tr('Calcolo','Calculator')),(1,Icons.layers_outlined,tr('Filamenti','Filaments')),(2,Icons.category_outlined,tr('Voci','Items')),(3,Icons.settings_outlined,tr('Impostazioni','Settings'))])
