@@ -209,7 +209,7 @@ Widget calculator()=>ListView(padding:const EdgeInsets.fromLTRB(14,10,14,26),chi
  const SizedBox(height:8),field(tr('Filamento totale (g)','Total filament (g)'),grams),const SizedBox(height:8),
  Row(children:[Expanded(child:field(tr('Ore','Hours'),hours)),const SizedBox(width:6),Expanded(child:field(tr('Minuti','Minutes'),minutes))])
  ])),
- const SizedBox(width:5),Expanded(flex:compact?4:5,child:Padding(padding:const EdgeInsets.only(top:4),child:const PrinterArt(width:170)))
+ const SizedBox(width:5),Expanded(flex:compact?4:5,child:Padding(padding:const EdgeInsets.only(top:4),child:PrinterArt(width:box.maxWidth*(compact?0.37:0.44))))
  ]);}),
  const SizedBox(height:12),btn(tr('CALCOLA COSTO','CALCULATE COST'),calculate)
  ]),icon:Icons.print_outlined),
