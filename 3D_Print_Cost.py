@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import sqlite3
-from windows_v11 import install_schema, CostsWindow, add_excel_details
+from windows_v11 import install_schema, CostsWindow, add_excel_details, cost_snapshot
 from pathlib import Path
 from datetime import datetime
 
@@ -460,10 +460,17 @@ class App(tk.Tk):
         self.energy_result = tk.StringVar(value=T["energy_cost_blank"])
         self.kwh_result = tk.StringVar(value=T["kwh_blank"])
         self.total_result = tk.StringVar(value="—")
+        self.production_summary = tk.StringVar(value="—")
+        self.packaging_summary = tk.StringVar(value="—")
+        self.post_summary = tk.StringVar(value="—")
         for var in (self.material_result, self.kwh_result, self.energy_result):
             ttk.Label(result_card, textvariable=var, style="Card.TLabel", wraplength=380).pack(anchor="w", pady=7)
+        for caption, variable in ((("Costo produzione" if self.lang=="it" else "Production cost"),self.production_summary),(("Imballaggio" if self.lang=="it" else "Packaging"),self.packaging_summary),(("Post-produzione" if self.lang=="it" else "Post-processing"),self.post_summary)):
+            line=ttk.Frame(result_card,style="Card.TFrame");line.pack(fill="x",pady=3)
+            ttk.Label(line,text=caption,style="Card.TLabel").pack(side="left")
+            ttk.Label(line,textvariable=variable,style="Card.TLabel").pack(side="right")
         total_card = ttk.Frame(result_card, padding=24, style="Card2.TFrame"); total_card.pack(fill="x", pady=(25,18))
-        ttk.Label(total_card, text=T["total_cost"], style="TotalCaption.TLabel").pack(anchor="w")
+        ttk.Label(total_card, text=("COSTO COMPLESSIVO" if self.lang=="it" else "TOTAL COST INCLUDING EXTRAS"), style="TotalCaption.TLabel").pack(anchor="w")
         ttk.Label(total_card, textvariable=self.total_result, style="Total.TLabel").pack(anchor="w", pady=(4,0))
         ttk.Button(result_card, text="▣  " + T["save_excel"], command=self.save_result_excel, style="Excel.TButton").pack(fill="x", pady=(8,0))
 
@@ -473,6 +480,16 @@ class App(tk.Tk):
         ttk.Button(actions, text=("▣  Costi aggiuntivi e prezzo di vendita" if self.lang=="it" else "▣  Additional costs and selling price"), command=self.open_costs, style="Primary.TButton").pack(side="left", padx=10)
         self.status = tk.StringVar()
         ttk.Label(outer, textvariable=self.status, style="Status.TLabel").pack(anchor="w", pady=(16,0))
+
+    def refresh_cost_summary(self):
+        result=self._last_result()
+        if not result:
+            return
+        info=cost_snapshot(self.db,result)
+        self.production_summary.set(euro(info["production"]))
+        self.packaging_summary.set(euro(info["packaging"]))
+        self.post_summary.set(euro(info["post"]))
+        self.total_result.set(euro(info["total"]))
 
     def open_costs(self):
         if self.costs_window is not None and self.costs_window.winfo_exists():
@@ -600,10 +617,10 @@ class App(tk.Tk):
             self.material_result.set(T["material_result"].format(cost=euro(material_cost), grams=grams, price=price_per_kg))
             self.kwh_result.set(T["kwh_result"].format(kwh=kwh,power=power_w,hours=total_hours))
             self.energy_result.set(T["energy_result"].format(cost=euro(energy_cost),electricity=electricity))
-            self.total_result.set(euro(total))
             self.last_result={"filament":self.filament_var.get(),"grams":grams,"price_per_kg":price_per_kg,
                               "total_hours":total_hours,"power_w":power_w,"kwh":kwh,"electricity":electricity,
                               "material_cost":material_cost,"energy_cost":energy_cost,"total":total}
+            self.refresh_cost_summary()
             if self.costs_window is not None and self.costs_window.winfo_exists():
                 self.costs_window.update_all()
         except ValueError as e:
