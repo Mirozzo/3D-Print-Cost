@@ -311,6 +311,7 @@ class App(tk.Tk):
         self.geometry("1120x820")
         self.minsize(980, 740)
         self.configure(bg="#0B1120")
+        self.app_icon_path = None
 
         # Dopo la scelta della lingua, apre l'app massimizzata sul desktop.
         try:
@@ -323,7 +324,9 @@ class App(tk.Tk):
             import sys
             base_dir = Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent if getattr(sys, "frozen", False) else Path(__file__).parent))
             ico = base_dir / "3D_Print_Cost.ico"
-            if ico.exists(): self.iconbitmap(str(ico))
+            if ico.exists():
+                self.app_icon_path = str(ico)
+                self.iconbitmap(self.app_icon_path)
         except Exception:
             pass
 
@@ -339,6 +342,13 @@ class App(tk.Tk):
     def choose_language(self):
         dlg = tk.Toplevel(self)
         dlg.title("3D Print Cost — Language / Lingua")
+        try:
+            import sys
+            base = Path(getattr(sys, "_MEIPASS", Path(__file__).parent))
+            icon = base / "3D_Print_Cost.ico"
+            if icon.exists(): dlg.iconbitmap(str(icon))
+        except (tk.TclError, OSError):
+            pass
         dlg.configure(bg="#0B1120")
         dlg.geometry("520x330")
         dlg.resizable(False, False)
@@ -418,7 +428,7 @@ class App(tk.Tk):
         T = self.T
         outer = ttk.Frame(self, padding=(54, 38), style="App.TFrame"); outer.pack(fill="both", expand=True)
         header = ttk.Frame(outer, style="App.TFrame"); header.pack(fill="x", pady=(0, 30))
-        ttk.Label(header, text="3D PRINT COST  v1.1", style="Title.TLabel").pack(anchor="w")
+        ttk.Label(header, text="◈  3D PRINT COST  v1.1", style="Title.TLabel").pack(anchor="w")
         ttk.Label(header, text=T["subtitle"], style="Subtitle.TLabel").pack(anchor="w", pady=(4, 0))
         accent_bar = tk.Frame(header, bg="#2DD4BF", height=3, bd=0, highlightthickness=0)
         accent_bar.pack(fill="x", pady=(18, 0))
@@ -428,7 +438,7 @@ class App(tk.Tk):
 
         input_card = ttk.Frame(body, padding=32, style="Card.TFrame")
         input_card.grid(row=0, column=0, sticky="nsew", padx=(0, 16)); input_card.columnconfigure((0,1), weight=1)
-        ttk.Label(input_card, text=T["print_data"], style="CardTitle.TLabel").grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 22))
+        ttk.Label(input_card, text="▣  "+T["print_data"], style="CardTitle.TLabel").grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 22))
         ttk.Label(input_card, text=T["filament"], style="Muted.TLabel").grid(row=1, column=0, columnspan=2, sticky="w")
         self.filament_var = tk.StringVar()
         self.filament_combo = ttk.Combobox(input_card, textvariable=self.filament_var, state="readonly", style="Modern.TCombobox")
@@ -445,7 +455,7 @@ class App(tk.Tk):
 
         result_card = ttk.Frame(body, padding=32, style="Card.TFrame")
         result_card.grid(row=0, column=1, sticky="nsew", padx=(16,0))
-        ttk.Label(result_card, text=T["summary"], style="CardTitle.TLabel").pack(anchor="w", pady=(0,20))
+        ttk.Label(result_card, text="▤  "+T["summary"], style="CardTitle.TLabel").pack(anchor="w", pady=(0,20))
         self.material_result = tk.StringVar(value=T["material_blank"])
         self.energy_result = tk.StringVar(value=T["energy_cost_blank"])
         self.kwh_result = tk.StringVar(value=T["kwh_blank"])
