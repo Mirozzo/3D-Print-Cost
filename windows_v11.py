@@ -357,3 +357,4 @@ class CostsWindow(tk.Toplevel):
                  "profit":info["profit"],"sale":info["price"]}
         for key,value in mapping.items():
             self.result_labels[key].config(text=f"€ {value:.2f}" if value is not None else "—")
+        self.parent.refresh_cost_summary()
